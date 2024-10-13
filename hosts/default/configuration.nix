@@ -1,10 +1,7 @@
 { inputs, pkgs, ... }:
 
 {
-  imports =
-    [
-		./modules.nix
-    ];
+  imports = [ ./modules.nix ];
 
   #LidSwitch ignore
   services.logind.lidSwitch = "ignore";
@@ -41,13 +38,11 @@
 
   # Configure console keymap
   console.keyMap = "br-abnt2";
-  
+
   # Home-manager setup
   home-manager = {
-  	extraSpecialArgs = { inherit inputs; };
-	users = {
-		"daniel" = import ../../modules/home/home.nix;
-	};
+    extraSpecialArgs = { inherit inputs; };
+    users = { "daniel" = import ../../modules/home/home.nix; };
   };
 
   # Flaking
@@ -56,10 +51,9 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  environment.systemPackages = with pkgs; [
-  ];
+  environment.systemPackages = with pkgs; [ ];
 
   # System Version
-  system.stateVersion = "24.05"; 
-  
+  system.stateVersion = "24.05";
+
 }

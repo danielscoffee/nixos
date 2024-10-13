@@ -12,6 +12,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+	"wakatime/vim-wakatime",
 	"https://github.com/ThePrimeagen/vim-be-good",
 	"https://github.com/mbbill/undotree",
 	"https://github.com/tpope/vim-fugitive",

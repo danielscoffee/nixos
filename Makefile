@@ -6,4 +6,9 @@ clean:
 	@sudo nix-collect-garbage -d
 
 dotfile:
-	@cp -r ./dotfiles/. $$HOME/.config/ 
+	@cp -r ./dotfiles/. $$HOME/.config 
+
+setup: 
+	@make rebuild
+	@make dotfile
+
