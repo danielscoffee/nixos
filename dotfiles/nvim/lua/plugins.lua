@@ -1,7 +1,7 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   vim.fn.system({
-    "git",
+	"git",
     "clone",
     "--filter=blob:none",
     "https://github.com/folke/lazy.nvim.git",
@@ -22,7 +22,6 @@ require("lazy").setup({
 	"https://github.com/rebelot/kanagawa.nvim",
 	"folke/tokyonight.nvim",
 	"https://github.com/github/copilot.vim",
-	require("dnvim.plugins.flutter"),
 	require("dnvim.plugins.yazi"),
 	require("dnvim.plugins.colorscheme"),
 	require("dnvim.plugins.harpoon"),

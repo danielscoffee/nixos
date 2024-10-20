@@ -1,6 +1,9 @@
 rebuild:
 	@sudo nixos-rebuild switch --flake ./#default
 
+update:
+	@nix flake update ./
+
 clean:
 	@sudo nix-collect-garbage --delete-older-than 1d
 	@sudo nix-collect-garbage -d
@@ -11,4 +14,3 @@ dotfile:
 setup: 
 	@make rebuild
 	@make dotfile
-

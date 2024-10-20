@@ -2,11 +2,13 @@
   programs.tmux = {
     enable = true;
     mouse = true;
-    plugins = with pkgs.tmuxPlugins; [ tokyo-night-tmux ];
+    plugins = with pkgs.tmuxPlugins; [ rose-pine ];
     extraConfig =
-      "	set -g @tokyo-night-tmux_show_path 1\n	set -g @tokyo-night-tmux_path_format relative\n	set-option -g status-position top\n	bind M-c attach-session -c \"#{pane_current_path}\"\n";
-
+      "set -g @plugin 'rose-pine/tmux'\n set -g @rose_pine_variant 'main'\n set -g @rose_pine_bar_bg_disable 'on' \n 
+	  set -g @rose_pine_only_windows 'on' \n set -g @rose_pine_disable_active_window_menu 'on' \n set -g @rose_pine_default_window_behavior 'on' \n set -g @rose_pine_show_current_program 'on'
+	  \n set-option -g status-position top\n	bind M-c attach-session -c \"#{pane_current_path}\"\n";
     keyMode = "vi";
     prefix = "M-s";
   };
 }
+

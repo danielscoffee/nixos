@@ -1,11 +1,12 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
     firefox
+	scrcpy
+	waydroid
     btop
     brightnessctl
     steam
-    aseprite
-    bitwarden-desktop
+    #bitwarden-desktop
     flameshot
     spotify
     prismlauncher
