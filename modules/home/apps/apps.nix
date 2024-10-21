@@ -1,4 +1,7 @@
 { pkgs, ... }: {
+  imports = [
+  	./apps/obs.nix
+  ];
   home.packages = with pkgs; [
     firefox
 	scrcpy

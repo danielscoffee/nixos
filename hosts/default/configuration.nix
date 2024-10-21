@@ -6,10 +6,6 @@
   #LidSwitch ignore
   services.logind.lidSwitch = "ignore";
 
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
   networking.hostName = "coffee";
 
   # Set your time zone.
