@@ -1,15 +1,17 @@
 { pkgs, ... }: {
   services.xserver = {
     enable = true;
-    desktopManager = { xterm.enable = false; };
-    displayManager = { defaultSession = "none+i3"; };
+    desktopManager.xterm.enable = false; 
     windowManager.i3 = {
+ 	  package = pkgs.i3-gaps;
       enable = true;
       extraPackages = with pkgs; [ dmenu i3status i3lock ];
     };
   };
+  
+  services = {
+    displayManager.defaultSession = "none+i3";
+  };
 
-  services.xserver.windowManager.i3.package = pkgs.i3-gaps;
   programs.dconf.enable = true;
-
 }

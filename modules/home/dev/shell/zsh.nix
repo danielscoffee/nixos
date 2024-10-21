@@ -5,7 +5,11 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
     initExtra =
-      "	source ~/nixos/headline.zsh-theme\n	if [ -z \"$TMUX\" ]\n	then\n		tmux attach -t TMUX || tmux new -s TMUX\n	fi\n";
+      ''
+	  export PATH=`go env GOPATH`/bin/:$PATH
+	  source ~/nixos/headline.zsh-theme
+	  if [ "$TMUX" = "" ]; then tmux; fi
+	  '';
     oh-my-zsh = {
       enable = true;
       plugins = [ "fzf" "git" "web-search" "tmux" "golang" ];

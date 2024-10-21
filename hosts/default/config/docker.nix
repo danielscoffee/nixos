@@ -1,3 +1,4 @@
+{ pkgs, ... }:
 {
   # Docker
   virtualisation.podman.enable = true;
@@ -5,4 +6,8 @@
     enable = true;
     setSocketVariable = true;
   };
+
+  environment.systemPackages = with pkgs; [
+	docker-compose
+  ];
 }

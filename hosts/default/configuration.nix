@@ -47,9 +47,8 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  environment.systemPackages = with pkgs; [
-	docker-compose
-  ];
+  #environment.systemPackages = with pkgs; [
+  #];
 
   # System Version
   system.stateVersion = "24.05";
