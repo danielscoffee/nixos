@@ -13,6 +13,7 @@
 	set -g @rose_pine_default_window_behavior 'on'
 	set -g @rose_pine_show_current_program 'on'
 	set-option -g status-position top
+	bind M-c attach-session -c "#{pane_current_path}"
 	'';
     keyMode = "vi";
     prefix = "M-s";

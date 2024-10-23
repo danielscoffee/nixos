@@ -8,7 +8,7 @@
       ''
 	  export PATH=`go env GOPATH`/bin/:$PATH
 	  source ~/nixos/headline.zsh-theme
-	  if [ "$TMUX" = "" ]; then tmux; fi
+	  tmux source ~/.config/tmux/tmux.conf
 	  '';
     oh-my-zsh = {
       enable = true;
