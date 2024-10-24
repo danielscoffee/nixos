@@ -9,7 +9,7 @@
     btop
     brightnessctl
     steam
-    #bitwarden-desktop
+    bitwarden-desktop
     flameshot
     spotify
     prismlauncher
