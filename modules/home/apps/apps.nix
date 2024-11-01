@@ -4,13 +4,14 @@
   ];
   home.packages = with pkgs; [
     firefox
-	scrcpy
-	waydroid
+	#kicad
+	steam
     btop
     brightnessctl
-    steam
     bitwarden-desktop
+	discord
     flameshot
+	droidcam
     spotify
     prismlauncher
     vesktop
