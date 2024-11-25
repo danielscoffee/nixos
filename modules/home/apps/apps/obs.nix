@@ -1,10 +1,9 @@
-{ pkgs, ... }:
-{ 
+{ pkgs, ... }: {
   programs.obs-studio = {
     enable = true;
     plugins = with pkgs.obs-studio-plugins; [
       wlrobs
-	  droidcam-obs
+      droidcam-obs
       obs-backgroundremoval
     ];
   };

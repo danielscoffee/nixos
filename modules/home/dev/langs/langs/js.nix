@@ -1,7 +1,1 @@
-{ pkgs, ... }: {
-	home.packages = with pkgs; [ 
-		typescript
-		nodejs
-		nest-cli
-	];
-}
+{ pkgs, ... }: { home.packages = with pkgs; [ typescript nodejs nest-cli ]; }

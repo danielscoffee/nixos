@@ -1,9 +1,6 @@
-{ pkgs, ... }:
-{
-	programs.nix-ld = {
-		enable = true;
-		libraries = with pkgs; [
-			dart-sass
-		];
-	};
+{ pkgs, ... }: {
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [ dart-sass ];
+  };
 }

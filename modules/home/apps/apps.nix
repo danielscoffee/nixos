@@ -1,17 +1,14 @@
 { pkgs, ... }: {
-  imports = [
-  	./apps/obs.nix
-  ];
+  imports = [ ./apps/obs.nix ./apps/dunst.nix ];
   home.packages = with pkgs; [
     firefox
-	#kicad
-	steam
+    #kicad
     btop
     brightnessctl
     bitwarden-desktop
-	discord
+    discord
     flameshot
-	droidcam
+    droidcam
     spotify
     prismlauncher
     vesktop

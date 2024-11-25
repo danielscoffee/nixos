@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   # Docker
   virtualisation.podman.enable = true;
   virtualisation.docker.rootless = {
@@ -7,7 +6,5 @@
     setSocketVariable = true;
   };
 
-  environment.systemPackages = with pkgs; [
-	docker-compose
-  ];
+  environment.systemPackages = with pkgs; [ docker-compose ];
 }
