@@ -35,12 +35,6 @@
   # Configure console keymap
   console.keyMap = "br-abnt2";
 
-  programs.thunar.enable = true;
-  services.gvfs.enable = true;
-  programs.thunar.plugins = with pkgs.xfce; [
-	  thunar-archive-plugin
-	  thunar-volman
-	];
   # Home-manager setup
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
@@ -53,8 +47,8 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  environment.systemPackages = with pkgs; [
-  ];
+  #environment.systemPackages = with pkgs; [
+  #];
 
   # System Version
   system.stateVersion = "24.05";

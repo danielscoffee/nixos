@@ -4,7 +4,6 @@
     firefox
     #kicad
     btop
-	vlc
     brightnessctl
     bitwarden-desktop
     discord
