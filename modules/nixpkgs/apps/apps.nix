@@ -1,0 +1,3 @@
+{
+  imports = [ ./apps/thunar.nix ];
+}

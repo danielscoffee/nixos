@@ -1,8 +1,10 @@
 { pkgs, ... }: {
   programs.zsh.enable = true;
+  programs.fish.enable = true;
+  services.logmein-hamachi.enable = true;
   users.users.daniel = {
     isNormalUser = true;
-    shell = pkgs.zsh;
+    shell = pkgs.fish;
     description = "daniel";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
   };
