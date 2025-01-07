@@ -46,9 +46,8 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-
-  #environment.systemPackages = with pkgs; [
-  #];
+  environment.systemPackages = with pkgs; [
+  ];
 
   # System Version
   system.stateVersion = "24.05";

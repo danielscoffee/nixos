@@ -1,1 +1,1 @@
-{ pkgs, ... }: { home.packages = with pkgs; [ nerdfonts fira-code ]; }
+{ pkgs, ... }: { home.packages = with pkgs; [ fira-code ]; }

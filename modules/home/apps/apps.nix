@@ -2,7 +2,8 @@
   imports = [ ./apps/obs.nix ./apps/dunst.nix ];
   home.packages = with pkgs; [
     firefox
-    #kicad
+	heroic
+	shotcut
     btop
     brightnessctl
     bitwarden-desktop
