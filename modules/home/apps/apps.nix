@@ -6,6 +6,7 @@
 	shotcut
     btop
     brightnessctl
+	obsidian
     bitwarden-desktop
     discord
     flameshot
