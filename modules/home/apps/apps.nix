@@ -2,11 +2,12 @@
   imports = [ ./apps/obs.nix ./apps/dunst.nix ];
   home.packages = with pkgs; [
     firefox
-	heroic
-	shotcut
+    gearlever
+    heroic
+    shotcut
     btop
     brightnessctl
-	obsidian
+    obsidian
     bitwarden-desktop
     discord
     flameshot

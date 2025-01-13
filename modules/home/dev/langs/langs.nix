@@ -4,7 +4,7 @@
     #jdk8
     #jdk21
     #jdk17
-	flutter
+    flutter
     lua
     gcc
     rustc

@@ -1,3 +1,1 @@
-{
-  imports = [ ./apps/apps.nix ];
-}
+{ imports = [ ./apps/apps.nix ]; }
