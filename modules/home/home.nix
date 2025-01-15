@@ -1,5 +1,5 @@
 {
-  imports = [ ./dev/dev.nix ./apps/apps.nix ./fonts/fonts.nix ];
+  imports = [ ./dev/dev.nix ./apps/apps.nix ]; 
 
   home.username = "daniel";
   home.homeDirectory = "/home/daniel";
