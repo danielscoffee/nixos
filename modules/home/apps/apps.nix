@@ -3,6 +3,7 @@
   home.packages = with pkgs; [
     firefox
 	anki
+	flatpak
     gearlever
     heroic
     shotcut
