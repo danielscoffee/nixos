@@ -2,7 +2,7 @@ rebuild:
 	@sudo nixos-rebuild switch --flake ./#default
 
 update:
-	@nix flake update ./
+	@nix flake update --flake ./
 
 clean:
 	@sudo nix-collect-garbage --delete-older-than 1d
