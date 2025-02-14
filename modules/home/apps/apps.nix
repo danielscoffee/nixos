@@ -8,6 +8,7 @@
     heroic
     shotcut
     btop
+	zed-editor
     brightnessctl
     obsidian
     bitwarden-desktop
