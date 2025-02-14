@@ -2,13 +2,13 @@
   imports = [ ./apps/obs.nix ./apps/dunst.nix ];
   home.packages = with pkgs; [
     firefox
-	anki
-	flatpak
+    anki
+    flatpak
     gearlever
     heroic
     shotcut
     btop
-	zed-editor
+    zed-editor
     brightnessctl
     obsidian
     bitwarden-desktop

@@ -1,3 +1,3 @@
-{ pkgs, ... }: { home.packages = with pkgs; [ typescript 
-	nodejs
-nest-cli yarn ]; }
+{ pkgs, ... }: {
+  home.packages = with pkgs; [ typescript nodejs nest-cli yarn ];
+}
