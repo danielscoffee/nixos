@@ -16,6 +16,7 @@ require("lazy").setup({
 	"https://github.com/ThePrimeagen/vim-be-good",
 	"https://github.com/mbbill/undotree",
 	"https://github.com/tpope/vim-fugitive",
+	'mrcjkb/haskell-tools.nvim',
 	--"https://github.com/github/copilot.vim",
 --"lervag/vimtex",	
 	"https://github.com/tiagovla/tokyodark.nvim",
