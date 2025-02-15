@@ -2,6 +2,7 @@
   imports = [ ./apps/obs.nix ./apps/dunst.nix ];
   home.packages = with pkgs; [
     firefox
+	television
     anki
     flatpak
     gearlever
