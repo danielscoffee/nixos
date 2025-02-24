@@ -4,6 +4,7 @@
   ./apps/dunst.nix ];
   home.packages = with pkgs; [
     firefox
+    unzip
     television
     anki
     flatpak
