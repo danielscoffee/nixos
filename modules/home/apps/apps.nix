@@ -1,15 +1,16 @@
 { pkgs, ... }: {
-  imports = [ ./apps/obs.nix ./apps/dunst.nix ];
+  imports = [ 
+  #./apps/obs.nix 
+  ./apps/dunst.nix ];
   home.packages = with pkgs; [
     firefox
-	television
+    television
     anki
     flatpak
     gearlever
     heroic
     shotcut
     btop
-    zed-editor
     brightnessctl
     obsidian
     bitwarden-desktop
