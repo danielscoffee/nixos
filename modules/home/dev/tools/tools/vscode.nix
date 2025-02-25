@@ -14,9 +14,9 @@
           "window.titleBarStyle" = "native";
           "editor.fontSize" = 18;
           "markdown.extension.preview.autoShowNavigationBar" = false;
-          "workbench.colorTheme" = "Dracula";
-          "workbench.preferredDarkColorTheme" = "Dracula";
-          "workbench.preferredHighContrastColorTheme" = "Dracula";
+          "workbench.colorTheme" = "Dracula Theme";
+          "workbench.preferredDarkColorTheme" = "theme-dracula";
+          "workbench.preferredHighContrastColorTheme" = "theme-dracula";
           "workbench.sideBar.location" = "right";
           "window.menuBarVisibility" = "hidden";
           "workbench.activityBar.location" = "hidden";
