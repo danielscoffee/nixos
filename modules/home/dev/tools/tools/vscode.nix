@@ -6,17 +6,18 @@
       default = { 
         extensions = with pkgs.vscode-extensions; [
           jnoortheen.nix-ide
-          dracula-theme.theme-dracula
           vscodevim.vim
+          golang.go
+          github.github-vscode-theme 
           yzhang.markdown-all-in-one
         ];
         userSettings = {
           "window.titleBarStyle" = "native";
           "editor.fontSize" = 18;
           "markdown.extension.preview.autoShowNavigationBar" = false;
-          "workbench.colorTheme" = "Dracula Theme";
-          "workbench.preferredDarkColorTheme" = "theme-dracula";
-          "workbench.preferredHighContrastColorTheme" = "theme-dracula";
+          "workbench.colorTheme" = "GitHub Dark Default";
+          "workbench.preferredDarkColorTheme" = "GitHub Dark Default";
+          "workbench.preferredHighContrastColorTheme" = "GitHub Dark Default";
           "workbench.sideBar.location" = "right";
           "window.menuBarVisibility" = "hidden";
           "workbench.activityBar.location" = "hidden";
