@@ -8,6 +8,7 @@
           jnoortheen.nix-ide
           vscodevim.vim
           golang.go
+          ziglang.vscode-zig
           github.github-vscode-theme 
           yzhang.markdown-all-in-one
         ];
