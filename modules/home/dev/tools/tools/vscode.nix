@@ -1,15 +1,14 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   programs.vscode = {
     enable = true;
     profiles = {
-      default = { 
+      default = {
         extensions = with pkgs.vscode-extensions; [
           jnoortheen.nix-ide
           vscodevim.vim
           golang.go
           ziglang.vscode-zig
-          github.github-vscode-theme 
+          github.github-vscode-theme
           yzhang.markdown-all-in-one
         ];
         userSettings = {
@@ -29,11 +28,18 @@
           "nix.serverPath" = "nixd";
           "nix.formatterPath" = "nixfmt";
           "nix.serverSettings" = {
-            "nixd" = {
-              "formatting" = {
-                "command" = [ "nixpkgs-fmt" ];
-              };
-            };
+            "nixd" = { "formatting" = { "command" = [ "nixpkgs-fmt" ]; }; };
+          };
+          "zig.zls.enabled" = "on";
+
+          "[zig]" = {
+
+            "editor.suggest.insertMode" = "replace";
+            "editor.stickyScroll.defaultModel" = "foldingProviderModel";
+            "editor.codeActionsOnSave" = { };
+          };
+          "editor.semanticTokenColorCustomizations" = {
+            "rules" = { "*.deprecated" = { "strikethrough" = true; }; };
           };
         };
       };

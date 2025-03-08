@@ -1,5 +1,6 @@
 { pkgs, ... }: {
-  imports = [ ./tools/fzf.nix ./tools/kitty.nix ./tools/tmux.nix ./tools/vscode.nix ];
+  imports =
+    [ ./tools/fzf.nix ./tools/kitty.nix ./tools/tmux.nix ./tools/vscode.nix ];
   home.packages = with pkgs; [
     # Git
     git
@@ -19,5 +20,8 @@
     # Nix
     nixfmt
     nixd
+    # LSPs
+    zls
+    gopls
   ];
 }

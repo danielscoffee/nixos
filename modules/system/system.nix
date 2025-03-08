@@ -6,4 +6,4 @@
     ./env/i3.nix
     ./env/config/config.nix
   ];
-} 
+}
