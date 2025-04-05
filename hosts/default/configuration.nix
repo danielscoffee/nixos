@@ -2,11 +2,11 @@
 
 {
   imports = [ ./modules.nix ];
-
   #LidSwitch ignore
   services.logind.lidSwitch = "ignore";
 
   networking.hostName = "coffee";
+  networking.firewall.enable = false;
 
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
@@ -49,6 +49,7 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
   environment.systemPackages = with pkgs; [
   ];
 

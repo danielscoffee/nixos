@@ -13,10 +13,12 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	"wakatime/vim-wakatime",
+	"neoclide/coc.nvim",
 	"https://github.com/ThePrimeagen/vim-be-good",
 	"https://github.com/mbbill/undotree",
 	"https://github.com/tpope/vim-fugitive",
 	'mrcjkb/haskell-tools.nvim',
+	'prettier/vim-prettier',
 	--"https://github.com/github/copilot.vim",
 --"lervag/vimtex",	
 	"https://github.com/tiagovla/tokyodark.nvim",

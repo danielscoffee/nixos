@@ -1,3 +1,3 @@
 { pkgs, ... }: {
-  home.packages = with pkgs; [ typescript nodejs nest-cli yarn ];
+  home.packages = with pkgs; [ typescript nodejs yarn bun nodePackages_latest.prisma prisma-engines ];
 }

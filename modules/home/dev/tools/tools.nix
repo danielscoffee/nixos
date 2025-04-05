@@ -7,6 +7,7 @@
     gh
     # CLI Tools
     neovim
+	openssl
     gnumake
     yazi
     neofetch

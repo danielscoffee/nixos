@@ -1,10 +1,11 @@
 { pkgs, ... }: {
   imports = [
-    #./apps/obs.nix 
+    ./apps/obs.nix 
     ./apps/dunst.nix
   ];
   home.packages = with pkgs; [
     firefox
+	jetbrains-toolbox
     unzip
     television
     anki
