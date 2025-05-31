@@ -11,7 +11,7 @@
     anki
     flatpak
     gearlever
-    heroic
+
     shotcut
     btop
     brightnessctl
@@ -21,7 +21,6 @@
     flameshot
     droidcam
     spotify
-    prismlauncher
     vesktop
     pavucontrol
   ];
