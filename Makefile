@@ -1,6 +1,10 @@
 rebuild:
 	@sudo nixos-rebuild switch --flake ./#default
 
+hardware:
+	@sudo nixos-generate-config --show-hardware-config > hosts/default/hardware-configuration.nix
+	@echo "Regenerated hosts/default/hardware-configuration.nix for THIS machine."
+
 update:
 	@nix flake update --flake ./
 
@@ -11,6 +15,7 @@ clean:
 dotfile:
 	@cp -r ./dotfiles/. $$HOME/.config 
 
-setup: 
+setup:
+	@make hardware
 	@make rebuild
 	@make dotfile

@@ -12,7 +12,7 @@
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackage.${system};
+      pkgs = nixpkgs.legacyPackages.${system};
     in {
       nixosConfigurations = {
         default = nixpkgs.lib.nixosSystem {
