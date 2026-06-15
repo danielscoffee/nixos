@@ -1,1 +1,1 @@
-{ imports = [ ./langs/langs.nix ./shell/shell.nix ./tools/tools.nix ]; }
+{ imports = [ ./langs/langs.nix ./shell/shell.nix ./tools/tools.nix ./ai/ai.nix ]; }

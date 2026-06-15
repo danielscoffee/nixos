@@ -10,7 +10,7 @@
 	openssl
     gnumake
     yazi
-    neofetch
+    fastfetch
     # GUI Tools
     postman
     # Extension

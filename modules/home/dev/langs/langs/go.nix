@@ -1,7 +1,8 @@
 {
   programs.go = {
     enable = true;
-    goBin = "$HOME/go/bin";
-    goPath = "$HOME/go";
+#	env = {
+#		GOPATH = [ "${config.home.homeDirectory}/go" ];
+#	};
   };
 }
