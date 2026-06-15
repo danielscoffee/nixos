@@ -3,7 +3,7 @@
 {
   imports = [ ./modules.nix ];
   #LidSwitch ignore
-  services.logind.lidSwitch = "ignore";
+  services.logind.settings.Login.HandleLidSwitch = "ignore";
 
   networking.hostName = "coffee";
   networking.firewall.enable = false;
@@ -14,6 +14,10 @@
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
+  xdg.portal = {
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.common.default = "*";
+  };
   i18n.inputMethod.type = "ibus";
   i18n.inputMethod.ibus.engines = with pkgs.ibus-engines; [ libpinyin ];
 
@@ -41,11 +45,17 @@
   # Home-manager setup
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
-    users = { "daniel" = import ../../modules/home/home.nix; };
+    backupFileExtension = "hm-backup";
+    users = {
+      "daniel" = import ../../modules/home/home.nix;
+    };
   };
 
   # Flaking
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
