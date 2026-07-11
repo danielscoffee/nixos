@@ -13,7 +13,7 @@ clean:
 	@sudo nix-collect-garbage -d
 
 dotfile:
-	@cp -r ./dotfiles/. $$HOME/.config 
+	@cp -r ./dotfiles/i3 ./dotfiles/i3status ./dotfiles/rofi $$HOME/.config/
 
 setup:
 	@make hardware
