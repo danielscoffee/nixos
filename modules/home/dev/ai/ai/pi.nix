@@ -1,5 +1,63 @@
 { pkgs, ... }:
 {
+  home.file.".pi/agent/models.json" = {
+    force = true;
+    text = builtins.toJSON {
+      providers = {
+        openai.models = [
+          {
+            id = "gpt-5.6-sol";
+            name = "GPT-5.6 Sol";
+            api = "openai-responses";
+            reasoning = true;
+            thinkingLevelMap = {
+              off = "none";
+              minimal = null;
+              xhigh = "xhigh";
+            };
+            input = [
+              "text"
+              "image"
+            ];
+            cost = {
+              input = 5;
+              output = 30;
+              cacheRead = 0.5;
+              cacheWrite = 6.25;
+            };
+            contextWindow = 1050000;
+            maxTokens = 128000;
+          }
+        ];
+
+        "openai-codex".models = [
+          {
+            id = "gpt-5.6-sol";
+            name = "GPT-5.6 Sol";
+            api = "openai-codex-responses";
+            reasoning = true;
+            thinkingLevelMap = {
+              minimal = "low";
+              xhigh = "xhigh";
+            };
+            input = [
+              "text"
+              "image"
+            ];
+            cost = {
+              input = 5;
+              output = 30;
+              cacheRead = 0.5;
+              cacheWrite = 6.25;
+            };
+            contextWindow = 1050000;
+            maxTokens = 128000;
+          }
+        ];
+      };
+    };
+  };
+
   home.file.".pi/agent/extensions/rtk.ts" = {
     force = true;
     text = ''
@@ -106,6 +164,8 @@
 
     settings = {
       defaultProjectTrust = "ask";
+      defaultProvider = "openai-codex";
+      defaultModel = "gpt-5.6-sol";
 
       packages = [
         "npm:pi-caveman@1.0.7"
