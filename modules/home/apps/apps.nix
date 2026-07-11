@@ -10,6 +10,14 @@
     recursive = true;
   };
 
+  xdg.configFile."flameshot/flameshot.ini" = {
+    force = true;
+    text = ''
+      [General]
+      useX11LegacyScreenshot=true
+    '';
+  };
+
   home.packages = with pkgs; [
     firefox
     jetbrains-toolbox
