@@ -11,7 +11,6 @@
   };
 
   home.packages = with pkgs; [
-    anydesk
     firefox
     jetbrains-toolbox
     unzip
