@@ -4,11 +4,15 @@
 
 **Goal:** Build approved static, Nix-managed Pi harness with explicit autonomous workflow, specialist agents, reusable prompts, and no runtime session mining.
 
-**Architecture:** Keep source Markdown under `modules/home/dev/ai/ai/pi/` and link every resource explicitly through Home Manager in `pi.nix`. Reuse packaged generic subagents; custom files define narrow specialists and workflow policy. All resources inherit current model settings, preserve single-writer safety, and never push automatically.
+**Architecture:** Keep source Markdown under `modules/home/dev/ai/ai/pi/` and link every resource explicitly through Home Manager in `pi.nix`. Reuse packaged generic subagents; custom files define narrow specialists and workflow policy. All resources inherit current model settings, preserve sole-writer safety, and never push.
 
 **Tech Stack:** Nix/Home Manager, Pi resource discovery, Agent Skills Markdown, pi-subagents agent frontmatter, Pi prompt templates, Bash validation.
 
 **Design:** `docs/plans/2026-07-18-pi-agent-harness-design.md`
+
+> **As-built safety:** Exactly one writer owns all edits and fixes; reviewers remain read-only. Architect, asker, searcher, QA, NixOS diagnostician, and security auditor lack shell and mutation tools. QA inspects evidence and proposes commands for the parent or sole writer; NixOS diagnostician proposes diagnostic/validation commands and never runs project commands or rebuild/switch operations. Push is forbidden. Merge, deploy, secret rotation, reset, stash, clean, discard, and other destructive actions stop autonomous execution and are outside its authority; outside autonomy, only a separate explicit user request authorizes the exact action. Autonomous mode may create scoped, validated Conventional Commits.
+>
+> **Commit-command gate:** Commit commands below preserve implementation history; neither this plan nor routine plan execution authorizes them. Run a commit step only when the user explicitly requests that commit or explicitly invokes autonomous mode for scope containing it. Never push.
 
 ---
 
@@ -88,9 +92,9 @@ Include exact global invariants:
 - Never expose secrets or personal data. Never commit credentials.
 - Never inspect historical Pi sessions at runtime.
 - Routine requests stay parent-led and single-agent. Delegate or fan out only when explicitly requested or when a loaded workflow requires it.
-- Keep one writer per worktree. Reviews are read-only unless explicitly assigned a fix pass.
-- Never push, merge, deploy, rotate secrets, reset, stash, clean, or discard user work without explicit approval.
-- Autonomous workflows may create scoped Conventional Commits; all other Git mutation requires user request.
+- Keep exactly one writer per worktree. Reviewers always remain read-only. Route every fix to the original sole writer.
+- Never push. Push is forbidden even when requested.
+- Autonomous invocation authorizes implementation and scoped, validated Conventional Commits only. Merge, deploy, secret rotation, reset, stash, clean, discard, and other destructive actions are outside autonomous scope: stop and report. Outside autonomy, perform one only after a separate explicit user request for that exact action.
 ```
 
 **Step 2: Vendor `grill-me`**
@@ -136,7 +140,7 @@ Body must define:
 6. Define acceptance evidence before implementation.
 7. Run focused validation, fresh risk-selected review, same-writer fixes, and at most three material review rounds.
 8. Preserve unrelated changes. Stage exact owned paths/hunks only.
-9. Commit task-sized Conventional Commits only after required checks pass. Never push.
+9. Commit task-sized Conventional Commits only after required checks pass and the user explicitly invoked autonomous mode for that scope. The plan itself and routine execution grant no commit authority. Never push.
 10. Return changed files, validation results, commit SHAs, skipped checks, and residual risks.
 
 **Step 4: Create `nix-managed-debugging` skill**
@@ -177,7 +181,7 @@ grep -q 'MIT License' modules/home/dev/ai/ai/pi/skills/grill-me/LICENSE
 
 Expected: PASS.
 
-**Step 6: Commit**
+**Step 6: Commit (conditional on explicit user authorization)**
 
 ```bash
 git add modules/home/dev/ai/ai/pi/AGENTS.md modules/home/dev/ai/ai/pi/skills
@@ -200,6 +204,8 @@ git commit -m "feat(pi): add harness workflow skills"
 
 **Step 1: Create read-only specialists**
 
+These agents receive no shell or mutation tools: `architect`, `asker`, `searcher`, `qa`, `nixos-diagnostician`, and `security-auditor`.
+
 Use common frontmatter defaults:
 
 ```yaml
@@ -212,14 +218,14 @@ completionGuard: false
 
 Create these role contracts:
 
-- `architect`: `tools: read, grep, find, ls, bash, lsp_navigation, ast_grep_search`; inspect architecture and return context, 2-3 options, recommendation, trade-offs, migration order, validation impact, unresolved decisions. Never edit.
-- `asker`: same read/search tools plus `skills: grill-me`; inspect code first, resolve one decision branch at a time, and return exactly one next question with recommended answer and why it matters. Never edit.
+- `architect`: read/search/LSP/AST tools; inspect architecture and return context, 2-3 options, recommendation, trade-offs, migration order, validation impact, unresolved decisions. Never edit.
+- `asker`: read/search tools plus `skills: grill-me`; inspect code first, resolve one decision branch at a time, and return exactly one next question with recommended answer and why it matters. Never edit.
 - `searcher`: read/search/LSP/AST tools; local repository evidence only, compressed paths/symbols/data flow/ownership/tests/risks. No web research and no edits.
-- `qa`: read/search/bash/LSP tools; inspect acceptance criteria, run non-destructive checks, cover regression and user-flow behavior, and report pass/fail/evidence/gaps. Never edit.
-- `nixos-diagnostician`: read/search/bash/web tools plus `skills: nix-managed-debugging`; diagnose NixOS/Home Manager/systemd/package ownership and identify declarative source fix. Never edit.
-- `security-auditor`: read/search/bash/web tools; review application and supply-chain threats, report severity, exploit path, evidence, smallest safe remediation, and missing tests. Never edit.
+- `qa`: read/search/LSP/AST tools; inspect acceptance criteria and supplied validation evidence, cover regression and user-flow behavior, propose exact safe validation commands for the parent or sole writer, and report pass/fail/evidence/gaps. It does not run project commands or edit.
+- `nixos-diagnostician`: read/search/web tools plus `skills: nix-managed-debugging`; diagnose NixOS/Home Manager/systemd/package ownership, identify declarative source fix, and propose diagnostic/validation commands for the parent or sole writer. It does not run project commands, rebuild/switch systems, or edit.
+- `security-auditor`: read/search/LSP/AST/web tools; review application and supply-chain threats, report severity, exploit path, evidence, smallest safe remediation, and missing tests. Never edit.
 
-Every read-only body must state that `bash` is for inspection and non-destructive validation only.
+Every read-only body must forbid editing, staging, committing, and other project mutation.
 
 **Step 2: Create writer specialists**
 
@@ -236,9 +242,9 @@ defaultContext: fork
 ---
 ```
 
-Body: implement approved scope only; inspect patterns; use TDD when behavior changes; remain sole writer; preserve unrelated changes; stop for unapproved decisions; verify; report changed files, commands/outcomes, residual risk; commit only when task explicitly authorizes autonomous atomic commits; never push.
+Body: implement approved scope only; inspect patterns; use TDD when behavior changes; remain sole writer; preserve unrelated changes; stop for unapproved decisions; verify; report changed files, commands/outcomes, residual risk; commit only when user explicitly invokes autonomous mode for that scope or separately requests the exact commit; never push.
 
-`devops-infra` frontmatter follows same writer-capable defaults with description covering Nix, CI/CD, containers, releases, systemd, deployment, and supply chain. Body requires current primary docs for version-sensitive infrastructure, declarative configuration, rollback path, no deployment/secret rotation without approval, and writes only when explicitly assigned sole-writer responsibility.
+`devops-infra` frontmatter follows same writer-capable defaults with description covering Nix, CI/CD, containers, releases, systemd, deployment, and supply chain. Body requires current primary docs for version-sensitive infrastructure, declarative configuration, rollback path, and sole-writer assignment before edits. Deployment and secret rotation stop autonomous execution; outside autonomy each requires a separate explicit user request for that exact action.
 
 **Step 3: Validate agent frontmatter and boundaries**
 
@@ -261,7 +267,7 @@ grep -q '^skills: nix-managed-debugging$' modules/home/dev/ai/ai/pi/agents/nixos
 
 Expected: PASS.
 
-**Step 4: Commit**
+**Step 4: Commit (conditional on explicit user authorization)**
 
 ```bash
 git add modules/home/dev/ai/ai/pi/agents
@@ -282,7 +288,7 @@ git commit -m "feat(pi): add specialist subagents"
 
 Use Pi prompt-template frontmatter with descriptions and argument hints.
 
-- `/autonomous <scope>`: explicitly load/follow `autonomous-atomic`; treat `$@` as authorized scope; keep one writer; select only useful specialists; commit atomically after validation; never push.
+- `/autonomous <scope>`: explicitly load/follow `autonomous-atomic`; treat `$@` as authorized implementation scope; keep exactly one writer and route every review fix back to that original writer; select only useful read-only specialists; commit atomically after validation; never push or perform dangerous actions outside autonomous scope.
 - `/grill <plan-or-design>`: invoke `asker`/`grill-me` against `$@`; inspect repo before asking answerable questions; ask one question with recommendation and wait.
 - `/repo-health [scope]`: read-only map using parallel `searcher` passes when useful, builtin `researcher` only for current external facts, architect synthesis, ranked findings with evidence; do not implement.
 - `/security-audit [scope]`: fresh `security-auditor` plus optional QA/supply-chain angle; read-only findings ranked by severity with exploitability, evidence, remediation, and test gaps.
@@ -301,7 +307,7 @@ done
 
 Expected: PASS.
 
-**Step 3: Commit**
+**Step 3: Commit (conditional on explicit user authorization)**
 
 ```bash
 git add modules/home/dev/ai/ai/pi/prompts
@@ -384,7 +390,7 @@ nix eval .#homeConfigurations.daniel.activationPackage.drvPath
 
 Expected: all exit 0.
 
-**Step 5: Commit**
+**Step 5: Commit (conditional on explicit user authorization)**
 
 ```bash
 git add modules/home/dev/ai/ai/pi.nix
@@ -462,11 +468,11 @@ Request fresh review angles:
 2. Safety, privacy, Git policy, and autonomous escalation boundaries.
 3. Simplicity, duplication, wording precision, and Nix maintainability.
 
-Reviewers inspect `git diff d0e82a2..HEAD` and do not edit.
+Reviewers inspect `git diff d0e82a2..HEAD` and always remain read-only. Route every accepted finding to the original sole writer.
 
-**Step 2: Apply accepted fixes with one writer**
+**Step 2: Apply accepted fixes with original sole writer**
 
-Make only concrete fixes inside approved design. Re-run affected assertions and Nix checks. Commit fixes as:
+Route every accepted finding to the original sole writer. Make only concrete fixes inside approved design. Re-run affected assertions and Nix checks. Only with explicit user authorization (or explicitly invoked autonomous scope), commit fixes as:
 
 ```bash
 git commit -m "fix(pi): harden agent harness policies"

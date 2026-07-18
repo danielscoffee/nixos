@@ -57,19 +57,22 @@ Existing builtin `researcher` remains external-evidence specialist. Existing `sc
 - Validate before completion and report exact commands and outcomes.
 - Never expose or commit secrets.
 - Do not inspect historical sessions at runtime.
-- Use one writer per worktree.
-- Never push automatically.
+- Use exactly one writer per worktree. Reviewers always remain read-only; route every fix to the original sole writer.
+- Never push. Push is forbidden even when requested.
+- Merge, deploy, secret rotation, reset, stash, clean, discard, and other destructive actions are outside autonomous scope. Stop and report when one is encountered. Outside autonomy, perform one only after a separate explicit user request for that exact action.
 
 ## Specialists
+
+`architect`, `asker`, `searcher`, `qa`, `nixos-diagnostician`, and `security-auditor` receive no shell or mutation tools.
 
 - `architect`: read-only system boundaries, options, trade-offs, migration sequencing, and ADR-ready decisions.
 - `asker`: one-question-at-a-time design interrogation using `grill-me`; supplies recommended answer and inspects code instead of asking questions code can answer.
 - `searcher`: fast local-only symbol, ownership, integration-point, and pattern discovery.
 - Builtin `researcher`: external primary-source research and provenance.
-- `qa`: test strategy, regression risks, user-flow validation, and evidence gaps.
+- `qa`: read-only test strategy, regression risks, user-flow validation, and evidence gaps. It inspects supplied evidence and proposes exact validation commands for the parent or sole writer; it does not run project commands.
 - `devops-infra`: Nix, CI/CD, containers, releases, systemd, deployment, and supply-chain configuration. It writes only when assigned sole-writer responsibility.
 - `developer`: implementation/execution for approved scope, focused tests, minimal diffs, verification, and optional autonomous atomic commits.
-- `nixos-diagnostician`: read-only NixOS/Home Manager troubleshooting and declarative fix-location guidance.
+- `nixos-diagnostician`: read-only NixOS/Home Manager troubleshooting and declarative fix-location guidance. It proposes diagnostic and validation commands for the parent or sole writer; it does not run project commands or rebuild/switch systems.
 - `security-auditor`: read-only application and supply-chain review with ranked evidence-backed findings.
 
 ## Grill-me source
@@ -91,9 +94,9 @@ Routine requests use no automatic fanout. `/autonomous <scope>` authorizes:
 5. Assign one writer: usually `developer`, or `devops-infra` for infrastructure-only work.
 6. Run focused checks.
 7. Select fresh read-only reviewers by risk: `qa`, `security-auditor`, `nixos-diagnostician`, or generic reviewer.
-8. Return accepted findings to same writer.
+8. Return every accepted finding to the original sole writer. Reviewers always remain read-only.
 9. Re-review material fixes, capped at three rounds.
-10. Create scoped Conventional Commits and report SHAs. Never push.
+10. Create scoped, validated Conventional Commits and report SHAs. Never push.
 
 `/repo-health [scope]` performs read-only repository mapping and ranked recommendations. `/security-audit [scope]` performs focused security review. `/grill <plan>` starts design interrogation.
 
@@ -101,7 +104,8 @@ Routine requests use no automatic fanout. `/autonomous <scope>` authorizes:
 
 - Preserve unrelated dirty-tree files and exclude them from staging.
 - Stop if target files contain overlapping user edits.
-- Never reset, stash, clean, overwrite, deploy, rotate secrets, or perform destructive operations without approval.
+- Never push. Push is forbidden even when requested.
+- Merge, deploy, secret rotation, reset, stash, clean, discard, overwrite, and other destructive actions are outside autonomous scope: stop and report. Outside autonomy, only a separate explicit user request for the exact action authorizes it.
 - Failed required validation blocks autonomous commits unless user accepts risk.
 - Stop for scope expansion or unapproved product, architecture, security, or deployment decisions.
 - Reviews report concrete findings with severity and file/line evidence; speculative polish stays out.
@@ -123,7 +127,7 @@ Routine requests use no automatic fanout. `/autonomous <scope>` authorizes:
 
 - Runtime session mining, embeddings, personalization daemon, or telemetry.
 - Always-on autonomy or reviewer fanout.
-- Automatic push, PR, merge, deployment, or secret operations.
+- Pushes, PR creation, autonomous merge/deployment/secret operations, or other destructive repository operations.
 - Parallel writers in one worktree.
 - Replacement of packaged generic agents.
 - Model routing based on historical sessions.
