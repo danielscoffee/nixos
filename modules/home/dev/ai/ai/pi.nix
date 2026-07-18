@@ -181,11 +181,13 @@
       packages = [
         "npm:pi-caveman@1.0.7"
         "npm:pi-superpowers@0.2.0"
-        "npm:pi-web-access@0.10.7"
-        "npm:pi-subagents@0.28.0"
-        "npm:pi-lens@3.8.50"
-        "npm:pi-powerline-footer@0.6.1"
-        "npm:@ayulab/pi-rewind@0.3.1"
+        "npm:pi-web-access@0.13.0"
+        "npm:pi-subagents@0.35.1"
+        "npm:pi-lens@3.8.70"
+        "npm:pi-powerline-footer@0.7.0"
+        "npm:@ayulab/pi-rewind@0.4.6"
+        "npm:@dietrichgebert/ponytail@4.8.4"
+        "npm:pi-advisor@0.3.0"
       ];
     };
   };
