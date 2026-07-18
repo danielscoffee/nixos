@@ -1,6 +1,6 @@
 ---
 name: nix-managed-debugging
-description: Debug Nix-managed path failures by proving ownership, version drift, and declarative source fixes before mutation.
+description: Debug NixOS and Home Manager ownership conflicts, immutable or read-only paths, activation collisions, rebuild failures, and module or configuration drift.
 ---
 
 # Nix-Managed Debugging
