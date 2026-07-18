@@ -4,7 +4,7 @@
 
 **Goal:** Update exact Nix-managed Pi package pins and add official Ponytail plus advisor without enabling advisor or changing model defaults.
 
-**Architecture:** Modify only `programs.pi-coding-agent.settings.packages` in `pi.nix`. Resolve and inspect exact npm packages in an isolated temporary agent directory, then validate the generated Home Manager settings and Pi resource discovery.
+**Architecture:** Modify `programs.pi-coding-agent.settings.packages` and add one explicit Lens skills path in `pi.nix`. Resolve and inspect exact npm packages in an isolated temporary agent directory, then validate the generated Home Manager settings and Pi resource discovery.
 
 **Tech Stack:** Nix/Home Manager, Pi 0.80.x package loader, npm registry, Node/Bun.
 
@@ -21,15 +21,15 @@
 
 **Step 1: Verify RED expectations**
 
-Run assertions proving current package list does not yet match target:
+Run assertions proving the compatibility rollback does not yet match the final target:
 
 ```bash
-! grep -q 'npm:pi-web-access@0.13.0' modules/home/dev/ai/ai/pi.nix
-! grep -q 'npm:@dietrichgebert/ponytail@4.8.4' modules/home/dev/ai/ai/pi.nix
-! grep -q 'npm:pi-advisor@0.3.0' modules/home/dev/ai/ai/pi.nix
+grep -q 'npm:pi-lens@3.8.50' modules/home/dev/ai/ai/pi.nix
+! grep -q 'npm:pi-lens@3.8.70' modules/home/dev/ai/ai/pi.nix
+! grep -q 'npm/node_modules/pi-lens/skills' modules/home/dev/ai/ai/pi.nix
 ```
 
-Expected: all exit 0 because target strings are absent.
+Expected: all exit 0 because 3.8.50 is pinned and the 3.8.70 pin plus workaround are absent.
 
 **Step 2: Replace package list with exact pins**
 
@@ -41,17 +41,21 @@ packages = [
   "npm:pi-superpowers@0.2.0"
   "npm:pi-web-access@0.13.0"
   "npm:pi-subagents@0.35.1"
-  "npm:pi-lens@3.8.50"
+  "npm:pi-lens@3.8.70"
   "npm:pi-powerline-footer@0.7.0"
   "npm:@ayulab/pi-rewind@0.4.6"
   "npm:@dietrichgebert/ponytail@4.8.4"
   "npm:pi-advisor@0.3.0"
 ];
+
+skills = [ "npm/node_modules/pi-lens/skills" ];
 ```
 
 Do not change default provider/model, resource links, extension source, `extraPackages`, or `flake.lock`.
 
-Compatibility exception: retain `pi-lens` 3.8.50. Latest release 3.8.70 ships four skills but declares `pi.skills` as `../../skills`; Pi 0.80.8 silently discovers zero Lens skills. Update after a fixed upstream release.
+Compatibility workaround: `pi-lens` 3.8.70 ships four skills but declares `pi.skills` as `../../skills`; Pi 0.80.8 silently discovers zero Lens skills through the package manifest. The explicit settings path exposes four new prefixed skill names: `pi-lens-ast-grep`, `pi-lens-lsp-navigation`, `pi-lens-write-ast-grep-rule`, and `pi-lens-write-tree-sitter-rule`. Remove the path only after an upstream manifest fix and resource-loader validation of all four skills.
+
+Lifecycle rationale: 3.8.50 runs a consumer `postinstall` that downloads 26 WASM files without integrity verification. Version 3.8.70 ships npm-integrity-covered grammars and has no consumer `install` or `postinstall` hook.
 
 **Step 3: Run focused GREEN checks**
 
@@ -61,7 +65,7 @@ for spec in \
   'npm:pi-superpowers@0.2.0' \
   'npm:pi-web-access@0.13.0' \
   'npm:pi-subagents@0.35.1' \
-  'npm:pi-lens@3.8.50' \
+  'npm:pi-lens@3.8.70' \
   'npm:pi-powerline-footer@0.7.0' \
   'npm:@ayulab/pi-rewind@0.4.6' \
   'npm:@dietrichgebert/ponytail@4.8.4' \
@@ -69,6 +73,7 @@ for spec in \
 do
   test "$(grep -Fc "\"$spec\"" modules/home/dev/ai/ai/pi.nix)" -eq 1
 done
+test "$(grep -Fc '"npm/node_modules/pi-lens/skills"' modules/home/dev/ai/ai/pi.nix)" -eq 1
 nixfmt modules/home/dev/ai/ai/pi.nix
 git diff --check
 ```
@@ -79,7 +84,7 @@ Expected: all exit 0.
 
 ```bash
 git add modules/home/dev/ai/ai/pi.nix
-git commit -m "chore(pi): update plugins"
+git commit -m "fix(pi): load updated Lens skills"
 ```
 
 ---
@@ -97,7 +102,7 @@ For each changed/new package, compare `npm view <exact-spec> version dist.integr
 ```text
 pi-web-access 0.13.0
 pi-subagents 0.35.1
-pi-lens 3.8.50
+pi-lens 3.8.70
 pi-powerline-footer 0.7.0
 @ayulab/pi-rewind 0.4.6
 @dietrichgebert/ponytail 4.8.4
@@ -106,9 +111,9 @@ pi-advisor 0.3.0
 
 **Step 2: Install exact packages in isolated directory**
 
-Create a temporary npm project and run `npm install --ignore-scripts --save-exact` with all nine package specs. Set temporary `HOME`, `XDG_CONFIG_HOME`, `PI_CODING_AGENT_DIR`, and npm cache where practical. Never write active `~/.pi/agent`.
+Hash active `~/.pi/agent/npm/package.json` and `package-lock.json` before validation. Create a temporary npm project and run `npm install --legacy-peer-deps --save-exact` with all nine package specs, without `--ignore-scripts`. Set temporary `HOME`, `XDG_CONFIG_HOME`, `PI_CODING_AGENT_DIR`, and npm cache. Never write active `~/.pi/agent`.
 
-Expected: install exits 0, exact direct dependencies appear in lockfile, no package lifecycle scripts execute.
+Expected: install exits 0 and exact direct dependencies appear in lockfile. Record npm 11 allow-scripts behavior for `@ast-grep/cli`; do not suppress its policy warning. Recheck active npm hashes after validation.
 
 **Step 3: Audit package tree**
 
@@ -117,7 +122,7 @@ npm audit --omit=dev --audit-level=high
 npm ls --depth=0
 ```
 
-Expected: no high/critical production vulnerabilities and every direct package resolved at exact target version.
+Expected: no high/critical production vulnerabilities, no deprecated installed peers, and every direct package resolved at exact target version.
 
 **Step 4: Validate Pi manifests/resources**
 
@@ -129,9 +134,11 @@ Use Pi's `DefaultResourceLoader` against temporary agent settings and isolated `
 - Ponytail contributes extension plus Ponytail skills;
 - advisor contributes extension only;
 - pi-subagents contributes bundled agents/prompts/skill;
-- pi-lens 3.8.50 contributes all four bundled Lens skills;
+- the explicit Lens path contributes exactly `pi-lens-ast-grep`, `pi-lens-lsp-navigation`, `pi-lens-write-ast-grep-rule`, and `pi-lens-write-tree-sitter-rule`, with zero relevant diagnostics;
+- Ponytail and advisor resources load;
 - advisor is not enabled and no `advisor.json` is created;
-- no model call occurs.
+- no model call occurs;
+- `scripts/rpc-load-check.mjs` or an equivalent compatible extension smoke check passes.
 
 If full extension factory smoke-loading is safe without prompts/model calls, create and dispose an in-memory Pi session with temporary config. Otherwise report loader-only boundary explicitly.
 
@@ -163,6 +170,7 @@ Expected: all exit 0.
 Build with a temporary out-link, locate generated `.pi/agent/settings.json`, and verify:
 
 - package array equals exact nine-item list;
+- skills array equals `["npm/node_modules/pi-lens/skills"]`;
 - default provider/model remain `openai-codex` / `gpt-5.6-sol`;
 - no `advisor.json` target exists;
 - existing harness resources and RTK extension remain generated.
