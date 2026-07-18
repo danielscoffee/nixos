@@ -3,6 +3,8 @@ description: Execute a bounded autonomous implementation workflow
 argument-hint: "<scope>"
 ---
 
+If `$@` is empty or whitespace, request a concrete implementation scope and stop. Until provided, do not implement, delegate, edit, stage, commit, or otherwise mutate Git.
+
 Explicit invocation authorizes implementation only within this scope: `$@`.
 
 Load and follow `autonomous-atomic`. Capture baseline repository state and preserve unrelated work. Before edits, state acceptance criteria and evidence needed to prove them. Clarify only unresolved blocking decisions; stop for any unapproved scope, product, architecture, security, or deployment choice.
