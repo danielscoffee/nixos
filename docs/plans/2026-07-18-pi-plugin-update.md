@@ -41,7 +41,7 @@ packages = [
   "npm:pi-superpowers@0.2.0"
   "npm:pi-web-access@0.13.0"
   "npm:pi-subagents@0.35.1"
-  "npm:pi-lens@3.8.70"
+  "npm:pi-lens@3.8.50"
   "npm:pi-powerline-footer@0.7.0"
   "npm:@ayulab/pi-rewind@0.4.6"
   "npm:@dietrichgebert/ponytail@4.8.4"
@@ -51,6 +51,8 @@ packages = [
 
 Do not change default provider/model, resource links, extension source, `extraPackages`, or `flake.lock`.
 
+Compatibility exception: retain `pi-lens` 3.8.50. Latest release 3.8.70 ships four skills but declares `pi.skills` as `../../skills`; Pi 0.80.8 silently discovers zero Lens skills. Update after a fixed upstream release.
+
 **Step 3: Run focused GREEN checks**
 
 ```bash
@@ -59,7 +61,7 @@ for spec in \
   'npm:pi-superpowers@0.2.0' \
   'npm:pi-web-access@0.13.0' \
   'npm:pi-subagents@0.35.1' \
-  'npm:pi-lens@3.8.70' \
+  'npm:pi-lens@3.8.50' \
   'npm:pi-powerline-footer@0.7.0' \
   'npm:@ayulab/pi-rewind@0.4.6' \
   'npm:@dietrichgebert/ponytail@4.8.4' \
@@ -95,7 +97,7 @@ For each changed/new package, compare `npm view <exact-spec> version dist.integr
 ```text
 pi-web-access 0.13.0
 pi-subagents 0.35.1
-pi-lens 3.8.70
+pi-lens 3.8.50
 pi-powerline-footer 0.7.0
 @ayulab/pi-rewind 0.4.6
 @dietrichgebert/ponytail 4.8.4
@@ -127,6 +129,7 @@ Use Pi's `DefaultResourceLoader` against temporary agent settings and isolated `
 - Ponytail contributes extension plus Ponytail skills;
 - advisor contributes extension only;
 - pi-subagents contributes bundled agents/prompts/skill;
+- pi-lens 3.8.50 contributes all four bundled Lens skills;
 - advisor is not enabled and no `advisor.json` is created;
 - no model call occurs.
 

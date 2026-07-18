@@ -12,7 +12,7 @@ Update Nix-managed Pi packages to current pinned npm releases and add official P
 | `pi-superpowers` | 0.2.0 | 0.2.0 |
 | `pi-web-access` | 0.10.7 | 0.13.0 |
 | `pi-subagents` | 0.28.0 | 0.35.1 |
-| `pi-lens` | 3.8.50 | 3.8.70 |
+| `pi-lens` | 3.8.50 | 3.8.50 |
 | `pi-powerline-footer` | 0.6.1 | 0.7.0 |
 | `@ayulab/pi-rewind` | 0.3.1 | 0.4.6 |
 | `@dietrichgebert/ponytail` | absent | 4.8.4 |
@@ -35,7 +35,7 @@ All package specs remain exact npm pins. Existing already-current packages remai
 - `pi-powerline-footer` 0.7.0 declares Pi compatibility `>=0.74.0 <0.81.0`.
 - `pi-web-access` 0.13.0 removes deprecated `code_search`, adds OpenAI subscription web search, and includes SSRF, path traversal, curator injection, and dependency security fixes.
 - `pi-subagents` 0.35.1 adds native supervisor coordination, agent administration, stricter acceptance semantics, read-only role metadata, and numerous async/runtime fixes.
-- `pi-lens` 3.8.70 contains extensive diagnostics, process cleanup, LSP, and security-scanning fixes.
+- `pi-lens` remains at 3.8.50 for compatibility. Latest release 3.8.70 ships four skills, but its `pi.skills` manifest incorrectly points to `../../skills`; Pi 0.80.8 therefore silently discovers zero Lens skills. Update Lens after a fixed upstream release restores skill discovery.
 - Ponytail and advisor are MIT-licensed, dependency-light Pi packages. Ponytail modifies prompt behavior; advisor can make additional model calls only after activation.
 
 ## Supply-chain review
