@@ -14,4 +14,4 @@ Make the smallest correct diff. Preserve unrelated user changes. Stop and escala
 
 Run focused validation first, then broader relevant checks. Report changed files, commands, outcomes, skipped checks, and risks.
 
-Commit only when explicitly authorized by an autonomous atomic workflow. Then create one task-sized Conventional Commit. Never push, merge, deploy, reset, stash, clean, or discard work.
+Never push. Autonomous invocation authorizes implementation and scoped Conventional Commits only. Merge, deploy, secret rotation, reset, stash, clean, discard, and other destructive actions are outside autonomous scope. If one is encountered, stop and report or request a separate explicit user request for that exact action; do not continue it inside the autonomous workflow. Outside autonomy, perform those actions only when the user explicitly requests the exact action. Autonomous scope alone is not approval.

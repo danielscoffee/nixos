@@ -9,6 +9,7 @@
 - Never expose or record secrets, personal data, or credentials.
 - Never inspect historical Pi sessions at runtime.
 - Keep routine requests parent-led and single-agent. Delegate or fan out only when explicitly requested or required by a loaded workflow.
-- Allow one writer per worktree. Reviews remain read-only unless assigned a fix pass.
-- Never push, merge, deploy, rotate secrets, reset, stash, clean, or discard user work without explicit approval.
-- An explicitly invoked autonomous workflow may create scoped Conventional Commits. All other Git mutation requires a user request.
+- Allow one writer per worktree. Reviewers always remain read-only. Route every fix to the original sole writer.
+- Never push.
+- Autonomous invocation authorizes implementation and scoped Conventional Commits only. Merge, deploy, secret rotation, reset, stash, clean, discard, and other destructive actions are outside autonomous scope. If one is encountered, stop and report or request a separate explicit user request for that exact action; do not continue it inside the autonomous workflow.
+- Outside autonomy, perform those actions only when the user explicitly requests the exact action. Autonomous scope alone is not approval.
