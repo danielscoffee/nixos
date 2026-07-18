@@ -191,9 +191,29 @@ Route any accepted fix to one writer, then re-run affected checks.
 
 ```bash
 git status --short
-git log --oneline --decorate -5
-git diff HEAD^ --stat
-git diff HEAD^ -- modules/home/dev/ai/ai/pi.nix
+git log --oneline --decorate -6
+git diff main...HEAD --stat
+git diff main...HEAD --name-only -- flake.lock
 ```
 
-Expected: clean branch and one scoped package-list implementation commit after plan commit; no `flake.lock` change.
+Expected: clean branch with scoped plan, package update, compatibility fix, and follow-up documentation commits; no `flake.lock` change. Do not require a fixed commit count.
+
+---
+
+### Post-merge user activation
+
+Activation is intentionally not performed by the implementation workflow. It requires a separate user action after merge.
+
+1. Apply the Home Manager generation:
+
+   ```bash
+   home-manager switch --flake .#daniel
+   ```
+
+2. Restart Pi and allow npm package reconciliation to finish.
+3. Run `/reload`, or restart Pi again, after reconciliation.
+4. Verify runtime resources:
+   - `/subagents-doctor` completes successfully;
+   - `/ponytail status` reports expected Ponytail state;
+   - `/advisor` reports advisor disabled;
+   - Pi exposes `pi-lens-ast-grep`, `pi-lens-lsp-navigation`, `pi-lens-write-ast-grep-rule`, and `pi-lens-write-tree-sitter-rule`.
