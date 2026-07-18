@@ -1,63 +1,5 @@
 { pkgs, ... }:
 {
-  home.file.".pi/agent/models.json" = {
-    force = true;
-    text = builtins.toJSON {
-      providers = {
-        openai.models = [
-          {
-            id = "gpt-5.6-sol";
-            name = "GPT-5.6 Sol";
-            api = "openai-responses";
-            reasoning = true;
-            thinkingLevelMap = {
-              off = "none";
-              minimal = null;
-              xhigh = "xhigh";
-            };
-            input = [
-              "text"
-              "image"
-            ];
-            cost = {
-              input = 5;
-              output = 30;
-              cacheRead = 0.5;
-              cacheWrite = 6.25;
-            };
-            contextWindow = 1050000;
-            maxTokens = 128000;
-          }
-        ];
-
-        "openai-codex".models = [
-          {
-            id = "gpt-5.6-sol";
-            name = "GPT-5.6 Sol";
-            api = "openai-codex-responses";
-            reasoning = true;
-            thinkingLevelMap = {
-              minimal = "low";
-              xhigh = "xhigh";
-            };
-            input = [
-              "text"
-              "image"
-            ];
-            cost = {
-              input = 5;
-              output = 30;
-              cacheRead = 0.5;
-              cacheWrite = 6.25;
-            };
-            contextWindow = 1050000;
-            maxTokens = 128000;
-          }
-        ];
-      };
-    };
-  };
-
   home.file.".pi/agent/extensions/rtk.ts" = {
     force = true;
     text = ''
@@ -142,6 +84,75 @@
         })
       }
     '';
+  };
+
+  home.file.".pi/agent/AGENTS.md" = {
+    force = true;
+    source = ./pi/AGENTS.md;
+  };
+  home.file.".pi/agent/agents/architect.md" = {
+    force = true;
+    source = ./pi/agents/architect.md;
+  };
+  home.file.".pi/agent/agents/asker.md" = {
+    force = true;
+    source = ./pi/agents/asker.md;
+  };
+  home.file.".pi/agent/agents/developer.md" = {
+    force = true;
+    source = ./pi/agents/developer.md;
+  };
+  home.file.".pi/agent/agents/devops-infra.md" = {
+    force = true;
+    source = ./pi/agents/devops-infra.md;
+  };
+  home.file.".pi/agent/agents/nixos-diagnostician.md" = {
+    force = true;
+    source = ./pi/agents/nixos-diagnostician.md;
+  };
+  home.file.".pi/agent/agents/qa.md" = {
+    force = true;
+    source = ./pi/agents/qa.md;
+  };
+  home.file.".pi/agent/agents/searcher.md" = {
+    force = true;
+    source = ./pi/agents/searcher.md;
+  };
+  home.file.".pi/agent/agents/security-auditor.md" = {
+    force = true;
+    source = ./pi/agents/security-auditor.md;
+  };
+  home.file.".pi/agent/prompts/autonomous.md" = {
+    force = true;
+    source = ./pi/prompts/autonomous.md;
+  };
+  home.file.".pi/agent/prompts/grill.md" = {
+    force = true;
+    source = ./pi/prompts/grill.md;
+  };
+  home.file.".pi/agent/prompts/repo-health.md" = {
+    force = true;
+    source = ./pi/prompts/repo-health.md;
+  };
+  home.file.".pi/agent/prompts/security-audit.md" = {
+    force = true;
+    source = ./pi/prompts/security-audit.md;
+  };
+  home.file.".pi/agent/skills/autonomous-atomic/SKILL.md" = {
+    force = true;
+    source = ./pi/skills/autonomous-atomic/SKILL.md;
+  };
+  home.file.".pi/agent/skills/grill-me/SKILL.md" = {
+    force = true;
+    source = ./pi/skills/grill-me/SKILL.md;
+  };
+  home.file.".pi/agent/skills/grill-me/LICENSE" = {
+    force = true;
+    source = ./pi/skills/grill-me/LICENSE;
+  };
+  home.file.".pi/agent/skills/nix-managed-debugging/SKILL.md" = {
+    force = true;
+    source = ./pi/skills/nix-managed-debugging/SKILL.md;
   };
 
   programs.pi-coding-agent = {
