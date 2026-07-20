@@ -179,6 +179,7 @@
       defaultModel = "gpt-5.6-sol";
 
       packages = [
+		"npm:pi-agent-sandbox@0.2.0"
         "npm:pi-caveman@1.0.7"
         "npm:pi-superpowers@0.2.0"
         "npm:pi-web-access@0.13.0"
