@@ -11,18 +11,17 @@
       url = "github:nix-community/NixOS-WSL/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hermes-agent.url = "github:NousResearch/hermes-agent/v2026.7.20";
   };
 
   outputs =
     {
-      self,
       nixpkgs,
       home-manager,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
     in
     {
       nixosConfigurations = {
@@ -46,6 +45,7 @@
       homeConfigurations = {
         daniel = home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs { inherit system; };
+          extraSpecialArgs = { inherit inputs; };
           modules = [ ./modules/home/home.nix ];
         };
       };

@@ -1,0 +1,32 @@
+# Objective
+
+<one measurable outcome>
+
+# Repository context
+
+- Base commit:
+- Relevant files:
+- Applicable instructions:
+
+# Scope
+
+- Allowed:
+- Non-goals:
+
+# Acceptance criteria
+
+- Observable behavior:
+- Focused check:
+- Broader repository check:
+- Scoped Conventional Commit and clean worktree.
+
+# Restrictions
+
+- Work only in current isolated worktree.
+- Do not modify or commit `.hermes-pi-task.md`.
+- Do not push, merge, deploy, reset, stash, clean, discard, or expose secrets.
+- Do not spawn subagents.
+
+# Completion report
+
+List changed files, commit hash, exact validation commands and outcomes, then state success or failure.

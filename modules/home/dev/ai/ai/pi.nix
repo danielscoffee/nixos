@@ -177,6 +177,7 @@
       defaultProjectTrust = "ask";
       defaultProvider = "openai-codex";
       defaultModel = "gpt-5.6-sol";
+	  defaultThinkingLevel = "max";
 
       packages = [
 		"npm:pi-agent-sandbox@0.2.0"
