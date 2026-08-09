@@ -6,7 +6,7 @@
     syntaxHighlighting.enable = true;
     initContent = ''
       export PATH=`go env GOPATH`/bin/:$PATH
-      source ~/nixos/headline.zsh-theme
+      source ${../../../../headline.zsh-theme}
       if [ -z "$TMUX" ]
       then
         tmux attach -t TMUX || tmux new -s TMUX

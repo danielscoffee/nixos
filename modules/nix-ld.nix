@@ -1,6 +1,10 @@
 { pkgs, ... }: {
   programs.nix-ld = {
     enable = true;
-    libraries = with pkgs; [ dart-sass nodejs yarn ];
+    libraries = with pkgs; [
+      dart-sass
+      nodejs
+      yarn
+    ];
   };
 }

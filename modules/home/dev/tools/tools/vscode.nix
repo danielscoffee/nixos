@@ -28,7 +28,11 @@
           "nix.serverPath" = "nixd";
           "nix.formatterPath" = "nixfmt";
           "nix.serverSettings" = {
-            "nixd" = { "formatting" = { "command" = [ "nixpkgs-fmt" ]; }; };
+            "nixd" = {
+              "formatting" = {
+                "command" = [ "nixfmt" ];
+              };
+            };
           };
           "zig.zls.enabled" = "on";
 
@@ -39,7 +43,11 @@
             "editor.codeActionsOnSave" = { };
           };
           "editor.semanticTokenColorCustomizations" = {
-            "rules" = { "*.deprecated" = { "strikethrough" = true; }; };
+            "rules" = {
+              "*.deprecated" = {
+                "strikethrough" = true;
+              };
+            };
           };
         };
       };

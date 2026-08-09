@@ -1,4 +1,6 @@
-
 { pkgs, ... }: {
-  home.packages = with pkgs; [ luaPackages.luarocks-nix lua ];
+  home.packages = with pkgs; [
+    luaPackages.luarocks-nix
+    lua
+  ];
 }

@@ -5,6 +5,7 @@
     ./ai/claude-code.nix
     ./ai/hermes.nix
     ./ai/pi.nix
+    ./ai/prime-agent.nix
   ];
 
   nixpkgs.overlays = [

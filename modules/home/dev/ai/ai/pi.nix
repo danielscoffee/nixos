@@ -177,18 +177,18 @@
       defaultProjectTrust = "ask";
       defaultProvider = "openai-codex";
       defaultModel = "gpt-5.6-sol";
-	  defaultThinkingLevel = "max";
+      defaultThinkingLevel = "max";
 
       packages = [
-		"npm:pi-agent-sandbox@0.2.0"
-        "npm:pi-caveman@1.0.7"
+        "npm:pi-agent-sandbox@0.2.0"
+        "npm:pi-caveman@1.0.8"
         "npm:pi-superpowers@0.2.0"
-        "npm:pi-web-access@0.13.0"
-        "npm:pi-subagents@0.35.1"
-        "npm:pi-lens@3.8.70"
-        "npm:pi-powerline-footer@0.7.0"
+        "npm:pi-web-access@0.19.0"
+        "npm:pi-subagents@0.45.0"
+        "npm:pi-lens@3.8.74"
+        "npm:pi-powerline-footer@0.12.2"
         "npm:@ayulab/pi-rewind@0.4.6"
-        "npm:@dietrichgebert/ponytail@4.8.4"
+        "npm:@dietrichgebert/ponytail@4.9.0"
         "npm:pi-advisor@0.3.0"
       ];
 
