@@ -1,8 +1,9 @@
 {
   programs.kitty = {
     enable = true;
+    environment.POWERLINE_NERD_FONTS = "1";
     font = {
-      name = "Fira Code";
+      name = "FiraCode Nerd Font Mono";
       size = 20;
     };
     keybindings = {

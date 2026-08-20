@@ -150,9 +150,34 @@
     force = true;
     source = ./pi/skills/grill-me/LICENSE;
   };
+  home.file.".pi/agent/skills/code-review" = {
+    force = true;
+    recursive = true;
+    source = ./pi/skills/code-review;
+  };
+  home.file.".pi/agent/skills/domain-modeling" = {
+    force = true;
+    recursive = true;
+    source = ./pi/skills/domain-modeling;
+  };
   home.file.".pi/agent/skills/nix-managed-debugging/SKILL.md" = {
     force = true;
     source = ./pi/skills/nix-managed-debugging/SKILL.md;
+  };
+  home.file.".pi/agent/skills/teach" = {
+    force = true;
+    recursive = true;
+    source = ./pi/skills/teach;
+  };
+  home.file.".pi/agent/skills/wizard" = {
+    force = true;
+    recursive = true;
+    source = ./pi/skills/wizard;
+  };
+  home.file.".pi/agent/skills/writing-for-agents" = {
+    force = true;
+    recursive = true;
+    source = ./pi/skills/writing-for-agents;
   };
 
   programs.pi-coding-agent = {

@@ -4,6 +4,7 @@
   imports = [ ./modules.nix ];
   #LidSwitch ignore
   services.logind.settings.Login.HandleLidSwitch = "ignore";
+  services.logind.settings.Login.HandlePowerKey = "ignore";
 
   networking.hostName = "coffee";
   networking.firewall.enable = false;
@@ -59,9 +60,6 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-
-  environment.systemPackages = with pkgs; [
-  ];
 
   # System Version
   system.stateVersion = "24.05";
