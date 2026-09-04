@@ -1,5 +1,102 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+let
+  tasteSkills = pkgs.fetchFromGitHub {
+    owner = "Leonxlnx";
+    repo = "taste-skill";
+    rev = "72e299530e2eb31ed8da06181bc19f6c18a00821";
+    hash = "sha256-DH1Q+1FgcVHnxMuXwifutCtTXulJjDgzwmQ9kSbL0a8=";
+  };
+  vercelAgentSkills = pkgs.fetchFromGitHub {
+    owner = "vercel-labs";
+    repo = "agent-skills";
+    rev = "dd089a8c752c966dee8bf0f27cb625ba193ffd9e";
+    hash = "sha256-fXbWS0+jtRYXdVn1KdqBdU0wEirrg5t/3IxdqPaAs8M=";
+  };
+  awesomeDesignMd = pkgs.fetchFromGitHub {
+    owner = "VoltAgent";
+    repo = "awesome-design-md";
+    rev = "8147538b4226ae41e2487a9179e3bcc1f68e8554";
+    hash = "sha256-AaLS2goYWZm8WHd+c5JWQxJlHZsF/2HKjs+0epK6R1Y=";
+  };
+  playwrightCliSource = pkgs.fetchFromGitHub {
+    owner = "microsoft";
+    repo = "playwright-cli";
+    rev = "2f85a94b7b885dbf4a5d34462f253a8746a690c9";
+    hash = "sha256-KH2rl0uS/zFPebjmg6MZndcl6Llx4c9/yfCGvisBn7g=";
+  };
+  playwrightCli = pkgs.buildNpmPackage (finalAttrs: {
+    pname = "playwright-cli";
+    version = "0.1.18";
+
+    src = playwrightCliSource;
+    npmDepsHash = "sha256-3kqiQvGtZfsmLHVWeCSM1yOYb+ws2x1vMPC1OuvrKAI=";
+    npmRebuildFlags = [ "--ignore-scripts" ];
+    dontNpmBuild = true;
+
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postInstall = ''
+      wrapProgram "$out/bin/playwright-cli" --set NO_UPDATE_NOTIFIER 1
+    '';
+
+    doInstallCheck = true;
+    nativeInstallCheckInputs = [ pkgs.versionCheckHook ];
+    versionCheckProgram = "${placeholder "out"}/bin/playwright-cli";
+
+    meta = {
+      description = "Token-efficient Playwright CLI for coding agents";
+      homepage = "https://github.com/microsoft/playwright-cli";
+      license = lib.licenses.asl20;
+      mainProgram = "playwright-cli";
+    };
+  });
+in
 {
+  home.packages = [ playwrightCli ];
+
+  home.file.".pi/agent/skills/taste" = {
+    force = true;
+    recursive = true;
+    source = "${tasteSkills}/skills";
+  };
+  home.file.".pi/agent/skills/vercel" = {
+    force = true;
+    recursive = true;
+    source = "${vercelAgentSkills}/skills";
+  };
+  home.file.".pi/agent/skills/playwright-cli" = {
+    force = true;
+    recursive = true;
+    source = "${playwrightCliSource}/skills/playwright-cli";
+  };
+  home.file.".pi/agent/skills/frontend-design/SKILL.md" = {
+    force = true;
+    source = pkgs.fetchurl {
+      url = "https://raw.githubusercontent.com/anthropics/claude-code/45bdfa96ca415da92e62b6ca85a1d6e29adf3c44/plugins/frontend-design/skills/frontend-design/SKILL.md";
+      hash = "sha256-Fgjqd/u2/DDROpfRLPqOvzE1jUDw3Ze+7SSCnWs/Rd0=";
+    };
+  };
+  home.file.".pi/agent/skills/frontend-design/LICENSE.txt" = {
+    force = true;
+    source = pkgs.fetchurl {
+      url = "https://raw.githubusercontent.com/anthropics/claude-code/45bdfa96ca415da92e62b6ca85a1d6e29adf3c44/LICENSE.md";
+      hash = "sha256-coFY/RA3FD+taQfo+jSAQXflmLcyZRlQP+g8r974SeY=";
+    };
+  };
+  home.file.".local/share/awesome-design-md" = {
+    force = true;
+    recursive = true;
+    source = "${awesomeDesignMd}/design-md";
+  };
+  home.file.".playwright/cli.config.json" = {
+    force = true;
+    text = builtins.toJSON {
+      browser = {
+        browserName = "chromium";
+        launchOptions.executablePath = lib.getExe pkgs.chromium;
+      };
+    };
+  };
+
   home.file.".pi/agent/extensions/rtk.ts" = {
     force = true;
     text = ''
@@ -191,6 +288,7 @@
       typescript
       nodejs
       bun
+      playwrightCli
       rtk
       git
       ripgrep

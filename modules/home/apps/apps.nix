@@ -3,6 +3,8 @@
   imports = [
     ./apps/obs.nix
     ./apps/dunst.nix
+    ./apps/chatgpt.nix
+    ./apps/grok-bot.nix
   ];
 
   xdg.configFile."television" = {
