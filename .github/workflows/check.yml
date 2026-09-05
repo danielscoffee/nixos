@@ -17,4 +17,4 @@ jobs:
       - name: Evaluate configurations
         run: nix flake check --no-build
       - name: Check formatting
-        run: nix fmt -- --ci
+        run: nix fmt -- --ci --excludes 'hosts/*/hardware-configuration.nix'

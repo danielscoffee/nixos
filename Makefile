@@ -2,14 +2,14 @@
 
 FLAKE ?= .
 SOURCE_FLAKE ?= path:$(abspath $(FLAKE))
-HOST ?= default
+HOST ?= loqe
 
 check:
 	@nix flake check --no-build "$(SOURCE_FLAKE)"
-	@nix fmt -- --ci
+	@nix fmt -- --ci --excludes 'hosts/*/hardware-configuration.nix'
 
 fmt:
-	@nix fmt
+	@nix fmt -- --excludes 'hosts/*/hardware-configuration.nix'
 
 rebuild:
 	@sudo nixos-rebuild switch --flake "$(FLAKE)#$(HOST)"

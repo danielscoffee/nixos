@@ -42,6 +42,16 @@
           specialArgs = { inherit inputs; };
           modules = [ ./hosts/wsl/configuration.nix ];
         };
+
+        loqe = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./hosts/loqe/configuration.nix
+            {
+              environment.systemPackages = [ ];
+            }
+          ];
+        };
       };
 
       homeConfigurations = {

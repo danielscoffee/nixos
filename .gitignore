@@ -1,3 +1,4 @@
 .rtk
 
 .worktrees/
+/hosts/*/hardware-configuration.nix

@@ -1,6 +1,6 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
-    luaPackages.luarocks-nix
-    lua
+    lua51Packages.luarocks-nix
+    lua5_1
   ];
 }

@@ -38,8 +38,5 @@
     '';
   };
 
-  home.packages = with pkgs; [
-    sesh
-    zoxide
-  ];
+  home.packages = with pkgs; [ sesh ];
 }

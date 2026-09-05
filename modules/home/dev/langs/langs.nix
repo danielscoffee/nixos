@@ -6,11 +6,8 @@
     ./langs/lua.nix
   ];
   home.packages = with pkgs; [
-    #jdk8
-    jdk21
-    #jdk17
+    jdk25
     dotnet-sdk
-    lua
     gcc
     rustc
     python3
