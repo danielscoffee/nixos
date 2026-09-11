@@ -1,7 +1,7 @@
 # NixOS configuration
 
-Personal flake for the `default` NixOS workstation, a NixOS-WSL host, and the
-`daniel` standalone Home Manager profile.
+Personal flake for the `default`/`loqe` workstations, a minimal `server`, a
+NixOS-WSL host, and the `daniel` standalone Home Manager profile.
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ Personal flake for the `default` NixOS workstation, a NixOS-WSL host, and the
 ```sh
 make check       # evaluate every flake output and verify formatting
 make fmt         # format all Nix files
-make build       # build the default system without activating it
+make build       # build loqe (the default HOST) without activating it
 make build-wsl   # build the WSL system without activating it
 ```
 
@@ -24,17 +24,65 @@ checks for pushes and pull requests.
 ## Apply the configuration
 
 ```sh
-make rebuild              # activates .#default
+make rebuild              # activates .#loqe
 make rebuild HOST=wsl     # activates another NixOS configuration
 ```
 
-`make hardware` regenerates `hosts/default/hardware-configuration.nix` for the
-current machine. Review its diff before rebuilding; hardware UUIDs are
-machine-specific.
+`make hardware HOST=server` generates `hosts/server/hardware-configuration.nix`
+from the current machine. Always run it on the matching host and review the output
+before rebuilding; hardware UUIDs are machine-specific. Without `HOST`, it targets
+`loqe`. Generation failures preserve the previous file; symlink targets are refused.
 
-`make setup` regenerates hardware configuration, rebuilds the default host, and
-copies the i3/i3status/rofi dotfiles. It is intended only for provisioning the
-matching workstation.
+`make setup` generates hardware, rebuilds the selected host, and copies the
+i3/i3status/rofi dotfiles. Use it only for a matching workstation, not the server.
+
+## Headless laptop server
+
+`hosts/server/configuration.nix` is exported as `nixosConfigurations.server`.
+It imports `modules/server/` (also exported as `nixosModules.server`): CLI essentials
+(`btop`, `curl`, Git, Make, `tmux`, Vim), NetworkManager for Ethernet/Wi-Fi,
+Tailscale, and OpenSSH. No i3, games, GUI apps, desktop Home Manager, Bluetooth,
+audio stack, or Docker. The local console stays available, and lid-close does not
+suspend the laptop.
+
+The host uses `x86_64-linux`, hostname `server`, and a `daniel` account with `wheel`
+and `networkmanager` membership. Boot defaults to UEFI/systemd-boot, like the other
+physical hosts. **Confirm the laptop uses UEFI before rebuilding**; change the
+bootloader configuration first for legacy BIOS. Keep its existing
+`system.stateVersion` if it differs from the repository's `24.05` default.
+
+Provision **on the old laptop**, from this checkout:
+
+```sh
+make hardware HOST=server
+```
+
+Review the generated hardware configuration. No other host's disk UUIDs are reused.
+Put your SSH **public** key in `hosts/server/admin.pub` before relying on SSH;
+without it (or an existing authorized key), remote login is unavailable. Never put
+a private key or Tailscale auth key in the repository. Existing local passwords
+are preserved; provision a login/sudo password for `daniel` on a fresh installation.
+
+```sh
+make build HOST=server
+make rebuild HOST=server
+```
+
+SSH accepts keys only, denies root login, and is allowed through the firewall only
+on the Tailscale interface. Public/LAN TCP port 22 remains closed. Connect networking
+locally (`sudo nmtui` for Wi-Fi), run `sudo tailscale up`, then SSH to the laptop's
+Tailscale IP from an authorized tailnet peer. This uses OpenSSH, not Tailscale SSH;
+tailnet policy must allow the connection. Initial activation needs local console
+access; do not rely on a LAN SSH session for the cutover.
+
+Until the laptop's hardware file exists, building the real host and `make check`
+fail NixOS's missing-root-filesystem assertion. No fake root device is supplied.
+These focused checks work without laptop-specific hardware:
+
+```sh
+nix eval --raw "path:$PWD#checks.x86_64-linux.server.drvPath"
+bash tests/hardware.sh
+```
 
 ## Sandboxed agent
 
@@ -54,8 +102,12 @@ home-directory, secret, and network access.
 ## Layout
 
 - `flake.nix`: inputs and exported NixOS/Home Manager configurations
-- `hosts/default`: physical workstation configuration
+- `hosts/default`, `hosts/loqe`: physical workstation configurations
+- `hosts/server`: minimal laptop-server host and local provisioning files
 - `hosts/wsl`: NixOS-WSL configuration
-- `modules/system`: reusable NixOS modules
+- `modules/system`: reusable desktop NixOS modules
+- `modules/server`: standalone minimal laptop-server module
 - `modules/home`: Home Manager modules
+- `tests/server.nix`: exported server host, headless services, and SSH/firewall check
+- `tests/hardware.sh`: hardware generation host-selection and failure-safety check
 - `dotfiles`: application configuration copied or linked by the modules

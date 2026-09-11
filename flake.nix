@@ -16,6 +16,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       home-manager,
       ...
@@ -26,7 +27,15 @@
     {
       formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree;
 
+      nixosModules.server = ./modules/server;
+      checks.${system}.server = import ./tests/server.nix { flake = self; };
+
       nixosConfigurations = {
+        server = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [ ./hosts/server/configuration.nix ];
+        };
+
         default = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
