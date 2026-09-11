@@ -27,6 +27,11 @@ assert config.networking.networkmanager.enable;
 assert config.networking.firewall.enable;
 assert !config.services.openssh.openFirewall;
 assert config.networking.firewall.allowedTCPPorts == [ ];
+assert config.networking.firewall.backend == "iptables";
+assert config.services.openssh.ports == [ 22 ];
+assert lib.hasInfix
+  "iptables -w -A nixos-fw -s 192.168.100.0/24 -p tcp --dport 22 -j nixos-fw-accept\n"
+  config.networking.firewall.extraCommands;
 assert
   config.networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts
   == config.services.openssh.ports;

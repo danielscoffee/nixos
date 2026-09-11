@@ -30,13 +30,13 @@
     television
     anki
     flatpak
-	gearlever
+    gearlever
     shotcut
     btop
     brightnessctl
     obsidian
     bitwarden-desktop
-	chromium
+    chromium
     discord
     flameshot
     droidcam

@@ -68,12 +68,42 @@ make build HOST=server
 make rebuild HOST=server
 ```
 
-SSH accepts keys only, denies root login, and is allowed through the firewall only
-on the Tailscale interface. Public/LAN TCP port 22 remains closed. Connect networking
-locally (`sudo nmtui` for Wi-Fi), run `sudo tailscale up`, then SSH to the laptop's
-Tailscale IP from an authorized tailnet peer. This uses OpenSSH, not Tailscale SSH;
-tailnet policy must allow the connection. Initial activation needs local console
-access; do not rely on a LAN SSH session for the cutover.
+A commit or `make build` alone does not change installed packages. Run
+`make rebuild HOST=server` **on the old laptop** to activate the headless profile;
+omitting `HOST=server` selects `loqe` instead. Existing desktop hosts stay unchanged.
+
+### SSH from the local network
+
+SSH accepts keys only and denies root login. The server allows TCP port 22 from
+LAN IPv4 subnet `192.168.100.0/24` and from the Tailscale interface, not globally.
+If your LAN uses another subnet, adjust the rule in `hosts/server/configuration.nix`.
+This uses the existing iptables firewall; no package changes are needed.
+
+On the client, reuse an existing SSH key. If you do not have one, create it with
+`ssh-keygen -t ed25519` (do not overwrite an existing key). Copy only its `.pub` file
+to `hosts/server/admin.pub` in the checkout **on the server**, using its local
+console or removable storage. If no key is authorized yet, `ssh-copy-id` cannot
+bootstrap access because password login is disabled.
+
+After activating the server configuration, find its LAN IPv4 address locally:
+
+```sh
+ip -br -4 addr
+```
+
+From another computer on that LAN, replace `SERVER_LAN_IP` with that address:
+
+```sh
+ssh -i ~/.ssh/id_ed25519 daniel@SERVER_LAN_IP
+```
+
+Use your actual private-key path if different. LAN SSH does not require Tailscale
+login or router port forwarding. For Tailscale access, run `sudo tailscale up` on
+the server, then use its Tailscale IP from an authorized tailnet peer. This uses
+OpenSSH, not Tailscale SSH; tailnet policy must allow the connection.
+
+Initial activation needs local console access. Connect networking locally
+(`sudo nmtui` for Wi-Fi), and keep the console available until SSH login works.
 
 Until the laptop's hardware file exists, building the real host and `make check`
 fail NixOS's missing-root-filesystem assertion. No fake root device is supplied.
