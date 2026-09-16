@@ -13,6 +13,8 @@ let
         }
       ];
     }).config;
+  home = config.home-manager.users.daniel;
+  homePackages = map toString home.home.packages;
 in
 assert flake.nixosConfigurations ? server;
 assert !server.config.boot.isContainer;
@@ -47,7 +49,52 @@ assert lib.all (setting: config.services.logind.settings.Login.${setting} == "ig
 ];
 assert config.systemd.enableEmergencyMode;
 assert config.services.logrotate.enable;
-assert !(config ? home-manager);
+assert config ? home-manager;
+assert config.programs.fish.enable;
+assert config.users.users.daniel.shell.outPath == config.programs.fish.package.outPath;
+assert config.home-manager.useUserPackages;
+assert config.home-manager.backupFileExtension == "hm-backup";
+assert !config.home-manager.overwriteBackup;
+assert lib.all (name: home.programs.${name}.enable) [
+  "fish"
+  "neovim"
+  "tmux"
+  "fzf"
+  "starship"
+  "zoxide"
+];
+assert home.programs.neovim.defaultEditor;
+assert home.programs.neovim.viAlias && home.programs.neovim.vimAlias;
+assert home.programs.tmux.prefix == "M-s";
+assert lib.all (name: home.xdg.configFile.${name}.enable) [
+  "fish/config.fish"
+  "nvim/init.lua"
+  "tmux/tmux.conf"
+];
+assert lib.hasInfix (builtins.readFile ../dotfiles/server/nvim/init.lua)
+  home.programs.neovim.initLua;
+assert lib.all (package: lib.elem (toString package) homePackages) (
+  with server.pkgs;
+  [
+    gh
+    gcc
+    cmake
+    pkg-config
+    python3
+    nodejs
+    go
+    ripgrep
+    fd
+    jq
+    unzip
+    zip
+    nixfmt
+    nixd
+    sesh
+  ]
+);
+assert !home.gtk.enable && !home.qt.enable;
+assert !home.programs.kitty.enable && !home.programs.vscode.enable;
 assert
   !lib.any (enabled: enabled) [
     config.services.xserver.enable
