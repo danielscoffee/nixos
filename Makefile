@@ -16,7 +16,7 @@ rebuild:
 	@sudo nixos-rebuild switch --flake "$(SOURCE_FLAKE)#$(HOST)"
 
 build:
-	@nix build "$(SOURCE_FLAKE)#nixosConfigurations.$(HOST).config.system.build.toplevel"
+	@nix build "$(SOURCE_FLAKE)#nixosConfigurations.$(HOST).config.system.build.toplevel" --extra-experimental-features nix-command --extra-experimental-features flakes
 
 build-wsl:
 	@nix build "$(SOURCE_FLAKE)#nixosConfigurations.wsl.config.system.build.toplevel"
