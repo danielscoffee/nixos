@@ -41,7 +41,8 @@ i3/i3status/rofi dotfiles. Use it only for a matching workstation, not the serve
 `hosts/server/configuration.nix` is exported as `nixosConfigurations.server`.
 It imports `modules/server/` (also exported as `nixosModules.server`): CLI essentials
 (`btop`, `curl`, Git, Make, `tmux`, Vim), NetworkManager for Ethernet/Wi-Fi,
-Tailscale, and OpenSSH. No i3, games, GUI apps, desktop Home Manager, Bluetooth,
+Tailscale, and OpenSSH. A terminal-only Home Manager profile adds developer tools
+and dotfiles for `daniel`. No i3, games, GUI apps, desktop Home Manager, Bluetooth,
 audio stack, or Docker. The local console stays available, and lid-close does not
 suspend the laptop.
 
@@ -71,6 +72,31 @@ make rebuild HOST=server
 A commit or `make build` alone does not change installed packages. Run
 `make rebuild HOST=server` **on the old laptop** to activate the headless profile;
 omitting `HOST=server` selects `loqe` instead. Existing desktop hosts stay unchanged.
+
+### Server development tools and dotfiles
+
+`modules/home/server.nix` is the server's package and dotfile selector. Edit its
+`imports`, `programs.neovim`, and `home.packages` to choose terminal tools without
+importing the desktop Home Manager profile.
+
+- **Fish:** login shell, reusing the existing aliases/functions and Zoxide config.
+- **Starship/FZF:** prompt and fuzzy-finder integration from existing modules.
+- **tmux:** existing config, Sesh and Resurrect; prefix is `Alt+s`, not `Ctrl+b`.
+- **Neovim:** default editor, with `vi`/`vim` aliases. Edit
+  `dotfiles/server/nvim/init.lua` for server-specific settings and keybindings.
+  It keeps basic preferences without the desktop's plugin/download stack.
+- **Development:** Git/GH, GCC, Make, CMake, pkg-config, Python, Node.js, Go,
+  ripgrep, fd, jq, zip/unzip, nixfmt, and nixd.
+
+Home Manager generates `~/.config/fish/config.fish`, `~/.config/nvim/init.lua`,
+and `~/.config/tmux/tmux.conf`; edit their source modules, not these managed files.
+Existing unmanaged files get a `.hm-backup` suffix. If that backup already exists,
+activation stops rather than overwriting it; review the conflict before retrying.
+The current desktop's live dotfiles are not copied or modified.
+
+On the server, apply the updated checkout with `make rebuild HOST=server`, then
+reconnect SSH for the Fish login shell. Home Manager runs with the rebuild; do not
+use the desktop-only `make dotfile` or `make setup` targets.
 
 ### SSH from the local network
 
@@ -138,6 +164,8 @@ home-directory, secret, and network access.
 - `modules/system`: reusable desktop NixOS modules
 - `modules/server`: standalone minimal laptop-server module
 - `modules/home`: Home Manager modules
-- `tests/server.nix`: exported server host, headless services, and SSH/firewall check
+- `modules/home/server.nix`: server development packages and dotfile selection
+- `dotfiles/server/nvim/init.lua`: portable server Neovim settings
+- `tests/server.nix`: server host, developer profile, headless services, and SSH/firewall check
 - `tests/hardware.sh`: hardware generation host-selection and failure-safety check
 - `dotfiles`: application configuration copied or linked by the modules
