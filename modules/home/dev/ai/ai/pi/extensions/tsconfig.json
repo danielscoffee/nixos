@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@earendil-works/pi-ai": [
+        "/home/daniel/.nix-profile/lib/node_modules/pi-monorepo/node_modules/@earendil-works/pi-ai/dist/index.d.ts"
+      ],
+      "@earendil-works/pi-coding-agent": [
+        "/home/daniel/.nix-profile/lib/node_modules/pi-monorepo/dist/index.d.ts"
+      ],
+      "typebox": [
+        "/home/daniel/.nix-profile/lib/node_modules/pi-monorepo/node_modules/typebox/build/index.d.mts"
+      ],
+      "typebox/value": [
+        "/home/daniel/.nix-profile/lib/node_modules/pi-monorepo/node_modules/typebox/build/value/index.d.mts"
+      ]
+    }
+  },
+  "include": ["*.ts"]
+}

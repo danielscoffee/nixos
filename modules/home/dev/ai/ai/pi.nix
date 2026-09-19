@@ -24,6 +24,12 @@ let
     rev = "2f85a94b7b885dbf4a5d34462f253a8746a690c9";
     hash = "sha256-KH2rl0uS/zFPebjmg6MZndcl6Llx4c9/yfCGvisBn7g=";
   };
+  typesafeAiSkills = pkgs.fetchFromGitHub {
+    owner = "typesafe-ai";
+    repo = "skills";
+    rev = "65a39f393687675ce170e6094757de20370365b9";
+    hash = "sha256-Lh2Y90TFv+njKqo/g5WXEHw0Rk1jQSH5POqKtrvy5kM=";
+  };
   playwrightCli = pkgs.buildNpmPackage (finalAttrs: {
     pname = "playwright-cli";
     version = "0.1.18";
@@ -68,6 +74,11 @@ in
     recursive = true;
     source = "${playwrightCliSource}/skills/playwright-cli";
   };
+  home.file.".pi/agent/skills/typesafe-ai" = {
+    force = true;
+    recursive = true;
+    source = "${typesafeAiSkills}/skills/typesafe-ai";
+  };
   home.file.".pi/agent/skills/frontend-design/SKILL.md" = {
     force = true;
     source = pkgs.fetchurl {
@@ -96,6 +107,8 @@ in
       };
     };
   };
+
+  home.file.".pi/agent/extensions/jev.ts".source = ./pi/extensions/jev.ts;
 
   home.file.".pi/agent/extensions/rtk.ts" = {
     force = true;
@@ -299,7 +312,7 @@ in
     settings = {
       defaultProjectTrust = "ask";
       defaultProvider = "openai-codex";
-      defaultModel = "gpt-6-astra";
+      defaultModel = "gpt-5.6-sol";
       defaultThinkingLevel = "max";
 
       packages = [
