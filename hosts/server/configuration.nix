@@ -30,9 +30,11 @@
 
   programs.fish.enable = true;
 
+  users.manageLingering = true;
   users.users.daniel = {
     isNormalUser = true;
     shell = pkgs.fish;
+    linger = true; # Keep rootless Docker running between SSH sessions.
     extraGroups = [
       "wheel"
       "networkmanager"
@@ -42,7 +44,6 @@
   };
 
   home-manager = {
-    useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "hm-backup";
     users.daniel = import ../../modules/home/server.nix;

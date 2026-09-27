@@ -42,9 +42,9 @@ i3/i3status/rofi dotfiles. Use it only for a matching workstation, not the serve
 It imports `modules/server/` (also exported as `nixosModules.server`): CLI essentials
 (`btop`, `curl`, Git, Make, `tmux`, Vim), NetworkManager for Ethernet/Wi-Fi,
 Tailscale, and OpenSSH. A terminal-only Home Manager profile adds developer tools
-and dotfiles for `daniel`. No i3, games, GUI apps, desktop Home Manager, Bluetooth,
-audio stack, or Docker. The local console stays available, and lid-close does not
-suspend the laptop.
+and dotfiles for `daniel`, plus rootless Docker and Compose. No graphical
+session, GUI editors, games, Bluetooth, or audio stack. The local console stays
+available, and lid-close does not suspend the laptop.
 
 The host uses `x86_64-linux`, hostname `server`, and a `daniel` account with `wheel`
 and `networkmanager` membership. Boot defaults to UEFI/systemd-boot, like the other
@@ -75,9 +75,12 @@ omitting `HOST=server` selects `loqe` instead. Existing desktop hosts stay uncha
 
 ### Server development tools and dotfiles
 
-`modules/home/server.nix` is the server's package and dotfile selector. Edit its
-`imports`, `programs.neovim`, and `home.packages` to choose terminal tools without
-importing the desktop Home Manager profile.
+`modules/home/server.nix` selects terminal tools without importing the desktop
+Home Manager profile. It reuses the workstation language and CLI AI modules
+(Codex, Claude Code, Pi); credentials stay in each machine's user auth store, not
+in this repository. It keeps a separate Home Manager package set so the AI module's
+RTK overlay applies. VS Code, Kitty, Postman, and other GUI apps remain on the
+workstations.
 
 - **Fish:** login shell, reusing the existing aliases/functions and Zoxide config.
 - **Starship/FZF:** prompt and fuzzy-finder integration from existing modules.
@@ -85,8 +88,13 @@ importing the desktop Home Manager profile.
 - **Neovim:** default editor, with `vi`/`vim` aliases. Edit
   `dotfiles/server/nvim/init.lua` for server-specific settings and keybindings.
   It keeps basic preferences without the desktop's plugin/download stack.
-- **Development:** Git/GH, GCC, Make, CMake, pkg-config, Python, Node.js, Go,
-  ripgrep, fd, jq, zip/unzip, nixfmt, and nixd.
+- **Development:** Git/GH, GCC, Make, CMake, pkg-config, Python, Go, Node.js,
+  Rust, Zig, Java, .NET, Haskell, Lua, JS/TS, language servers, ripgrep, fd,
+  jq, zip/unzip, nixfmt, and nixd. Terminal tools include Yazi and tree-sitter.
+- **Docker:** rootless daemon for `daniel`, Docker CLI and Compose; user lingering
+  keeps the daemon running between SSH sessions. No rootful daemon or `docker`
+  group. `DOCKER_HOST` points to the user socket; check with `docker info` after
+  reconnecting. The firewall does not open container ports automatically.
 
 Home Manager generates `~/.config/fish/config.fish`, `~/.config/nvim/init.lua`,
 and `~/.config/tmux/tmux.conf`; edit their source modules, not these managed files.

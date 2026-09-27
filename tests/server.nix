@@ -20,6 +20,7 @@ assert flake.nixosConfigurations ? server;
 assert !server.config.boot.isContainer;
 assert config.networking.hostName == "server";
 assert config.users.users.daniel.isNormalUser;
+assert config.users.manageLingering && config.users.users.daniel.linger == true;
 assert lib.all (group: lib.elem group config.users.users.daniel.extraGroups) [
   "wheel"
   "networkmanager"
@@ -49,10 +50,18 @@ assert lib.all (setting: config.services.logind.settings.Login.${setting} == "ig
 ];
 assert config.systemd.enableEmergencyMode;
 assert config.services.logrotate.enable;
+assert config.virtualisation.docker.rootless.enable;
+assert config.virtualisation.docker.rootless.setSocketVariable;
+assert !config.virtualisation.docker.enable && !config.virtualisation.podman.enable;
+assert lib.elem (toString server.pkgs.docker-compose) (
+  map toString config.environment.systemPackages
+);
 assert config ? home-manager;
 assert config.programs.fish.enable;
 assert config.users.users.daniel.shell.outPath == config.programs.fish.package.outPath;
 assert config.home-manager.useUserPackages;
+assert !config.home-manager.useGlobalPkgs;
+assert home.nixpkgs.config.allowUnfree;
 assert config.home-manager.backupFileExtension == "hm-backup";
 assert !config.home-manager.overwriteBackup;
 assert lib.all (name: home.programs.${name}.enable) [
@@ -66,6 +75,12 @@ assert lib.all (name: home.programs.${name}.enable) [
 assert home.programs.neovim.defaultEditor;
 assert home.programs.neovim.viAlias && home.programs.neovim.vimAlias;
 assert home.programs.tmux.prefix == "M-s";
+assert lib.all (name: home.programs.${name}.enable) [
+  "go"
+  "codex"
+  "claude-code"
+  "pi-coding-agent"
+];
 assert lib.all (name: home.xdg.configFile.${name}.enable) [
   "fish/config.fish"
   "nvim/init.lua"
@@ -91,6 +106,15 @@ assert lib.all (package: lib.elem (toString package) homePackages) (
     nixfmt
     nixd
     sesh
+    rustc
+    cargo
+    zig
+    jdk25
+    dotnet-sdk
+    tree-sitter
+    zls
+    yazi
+    wget
   ]
 );
 assert !home.gtk.enable && !home.qt.enable;
@@ -103,6 +127,5 @@ assert
     config.services.flatpak.enable
     config.services.pipewire.enable
     config.hardware.bluetooth.enable
-    config.virtualisation.docker.enable
   ];
 config.system.build.toplevel
