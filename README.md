@@ -42,9 +42,9 @@ i3/i3status/rofi dotfiles. Use it only for a matching workstation, not the serve
 It imports `modules/server/` (also exported as `nixosModules.server`): CLI essentials
 (`btop`, `curl`, Git, Make, `tmux`, Vim), NetworkManager for Ethernet/Wi-Fi,
 Tailscale, and OpenSSH. A terminal-only Home Manager profile adds developer tools
-and dotfiles for `daniel`. No i3, games, GUI apps, desktop Home Manager, Bluetooth,
-audio stack, or Docker. The local console stays available, and lid-close does not
-suspend the laptop.
+and dotfiles for `daniel`, plus rootless Docker and Compose. No graphical
+session, GUI editors, games, Bluetooth, or audio stack. The local console stays
+available, and lid-close does not suspend the laptop.
 
 The host uses `x86_64-linux`, hostname `server`, and a `daniel` account with `wheel`
 and `networkmanager` membership. Boot defaults to UEFI/systemd-boot, like the other
@@ -75,9 +75,12 @@ omitting `HOST=server` selects `loqe` instead. Existing desktop hosts stay uncha
 
 ### Server development tools and dotfiles
 
-`modules/home/server.nix` is the server's package and dotfile selector. Edit its
-`imports`, `programs.neovim`, and `home.packages` to choose terminal tools without
-importing the desktop Home Manager profile.
+`modules/home/server.nix` selects terminal tools without importing the desktop
+Home Manager profile. It reuses the workstation language and CLI AI modules
+(Codex, Claude Code, Pi); credentials stay in each machine's user auth store, not
+in this repository. It keeps a separate Home Manager package set so the AI module's
+RTK overlay applies. VS Code, Kitty, Postman, and other GUI apps remain on the
+workstations.
 
 - **Fish:** login shell, reusing the existing aliases/functions and Zoxide config.
 - **Starship/FZF:** prompt and fuzzy-finder integration from existing modules.
@@ -85,8 +88,13 @@ importing the desktop Home Manager profile.
 - **Neovim:** default editor, with `vi`/`vim` aliases. Edit
   `dotfiles/server/nvim/init.lua` for server-specific settings and keybindings.
   It keeps basic preferences without the desktop's plugin/download stack.
-- **Development:** Git/GH, GCC, Make, CMake, pkg-config, Python, Node.js, Go,
-  ripgrep, fd, jq, zip/unzip, nixfmt, and nixd.
+- **Development:** Git/GH, GCC, Make, CMake, pkg-config, Python, Go, Node.js,
+  Rust, Zig, Java, .NET, Haskell, Lua, JS/TS, language servers, ripgrep, fd,
+  jq, zip/unzip, nixfmt, and nixd. Terminal tools include Yazi and tree-sitter.
+- **Docker:** rootless daemon for `daniel`, Docker CLI and Compose; user lingering
+  keeps the daemon running between SSH sessions. No rootful daemon or `docker`
+  group. `DOCKER_HOST` points to the user socket; check with `docker info` after
+  reconnecting. The firewall does not open container ports automatically.
 
 Home Manager generates `~/.config/fish/config.fish`, `~/.config/nvim/init.lua`,
 and `~/.config/tmux/tmux.conf`; edit their source modules, not these managed files.
@@ -154,6 +162,77 @@ agent --resume     # arguments are forwarded to Prime Agent
 
 The `git` sandbox profile permits work in the current repository while limiting
 home-directory, secret, and network access.
+
+## TypeSafe (Jev) in Pi
+
+Home Manager installs `modules/home/dev/ai/ai/pi/extensions/jev.ts` as
+`~/.pi/agent/extensions/jev.ts`, adding the **TypeSafe (Jev)** login provider and
+`jev` tool. Apply through your normal rebuild, then `/reload` in Pi. To try it
+before activation, launch from this checkout:
+
+```sh
+pi -e ./modules/home/dev/ai/ai/pi/extensions/jev.ts
+```
+
+Get a key from <https://console.typesafe.ai/keys>, then run in Pi:
+
+```text
+/login typesafe-ai
+```
+
+Enter the key in the secret prompt, not chat. Pi saves it in its user auth store;
+the tool uses it immediately, without a restart. `/logout typesafe-ai` removes
+the saved key. `TYPESAFE_API_KEY` remains an optional fallback; saved keys take
+precedence. Never put keys in Git, Nix expressions, or `sessionVariables`.
+
+Keep your usual chat model. Ask: **Use jev to judge whether “Production is down.
+Help now.” expresses urgency.** The tool accepts `state`, typed `questions`, and
+optional `model` (default `jev-latest`). Only supplied arguments go to TypeSafe.
+Calls use your TypeSafe account, time out after 30 seconds, and do not auto-retry.
+Responses over 50 KiB or 2000 lines are rejected; use smaller batches.
+
+### Local Jev feedback
+
+After applying the Home Manager configuration and `/reload`, run a new `jev`
+call, then use `/jev-feedback`. Choose one question from the latest successful
+call, review its JSON, remove sensitive content, select the correct answer, and
+confirm saving. Escape/cancel saves nothing. An interactive UI is required.
+
+**Redaction is manual. Remove secrets, credentials, and personal data from every
+field before confirming; preserve the meaning of the example.** No automatic
+redactor can guarantee this. The command never uploads feedback or reads Pi
+session history. Normal `jev` calls still send their supplied inputs to TypeSafe.
+
+Approved examples append to `~/.pi/agent/jev-feedback/samples.jsonl` (under
+`PI_CODING_AGENT_DIR` instead when overridden). The directory is private (`0700`)
+and the file is private (`0600`), outside this checkout by default. Symlinks,
+hard-linked files, and unsafe permissions/ownership are refused, not repaired.
+Keep this runtime dataset out of Git and Nix sources. If a write fails, inspect
+the file before retrying; an incomplete final record may need manual repair.
+
+Each JSON line contains `model`, redacted `state`, one `question`, scalar Jev
+`prediction`, and your `expected` answer. Noul labels are booleans, Choice labels
+are option keys, and Score labels are zero-based rubric levels. Feedback is saved
+only after explicit labeling and approval; an unreviewed prediction is never a
+training label. Samples are limited to 50 KiB; the editor also limits 2000 lines.
+
+Only the latest completed successful interactive call is retained in memory.
+Reloads, session changes, tree navigation, and exit clear it. There is no full-chat
+logging, automatic retrieval, downstream trainer, or Jev fine-tuning in this step.
+
+### Jev checks
+
+Checks use the installed Home Manager Pi package, with no npm install or real key:
+
+```sh
+node --test tests/jev.mjs
+tsc --project modules/home/dev/ai/ai/pi/extensions/tsconfig.json
+```
+
+The regression check covers Pi's login menu, in-memory login/logout, key fallback,
+mocked Jev requests, and feedback approval, labels, lifecycle clearing, and private
+storage. Feedback tests use temporary directories and synthetic data only. No paid
+calls. API: <https://docs.typesafe.ai/api>.
 
 ## Layout
 

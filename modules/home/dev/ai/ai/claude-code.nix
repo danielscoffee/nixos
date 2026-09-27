@@ -39,7 +39,7 @@
     enable = true;
 
     settings = {
-      model = "sonnet";
+      model = "claude-opus-5-5";
       permissionMode = "acceptEdits";
       includeCoAuthoredBy = false;
       cleanupPeriodDays = 30;

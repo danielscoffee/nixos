@@ -49,9 +49,15 @@
     "flakes"
   ];
 
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
+
   environment.systemPackages = with pkgs; [
     btop
     curl
+    docker-compose
     gitMinimal
     gnumake
     tmux

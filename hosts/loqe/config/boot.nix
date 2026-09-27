@@ -7,5 +7,11 @@
   boot.extraModprobeConfig = ''
     options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
   '';
+
+  # USB wake races leave xHCI pending and abort suspend with -EBUSY.
+  services.udev.extraRules = ''
+    SUBSYSTEM=="pci", ATTR{vendor}=="0x8086", ATTR{device}=="0x7ae0", ATTR{power/wakeup}="disabled"
+  '';
+
   security.polkit.enable = true;
 }

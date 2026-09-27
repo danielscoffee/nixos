@@ -6,9 +6,12 @@
     ./dev/shell/starship.nix
     ./dev/tools/tools/fzf.nix
     ./dev/tools/tools/tmux.nix
+    ./dev/langs/langs.nix
+    ./dev/ai/ai.nix
   ];
 
   home.stateVersion = "24.05";
+  nixpkgs.config.allowUnfree = true;
 
   programs.neovim = {
     enable = true;
@@ -23,18 +26,15 @@
 
   home.packages = with pkgs; [
     gh
-    gcc
     cmake
     pkg-config
-    python3
-    nodejs
-    go
-    ripgrep
-    fd
-    jq
+    openssh
+    tree-sitter
+    zls
+    yazi
+    wget
     unzip
     zip
-    nixfmt
     nixd
   ];
 }
