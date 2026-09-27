@@ -42,7 +42,7 @@
     enable = true;
 
     settings = {
-      model = "gpt-6-astra";
+      model = "gpt-6-sol";
       approval_policy = "on-request";
       sandbox_mode = "workspace-write";
       model_reasoning_effort = "medium";

@@ -312,7 +312,7 @@ in
     settings = {
       defaultProjectTrust = "ask";
       defaultProvider = "openai-codex";
-      defaultModel = "gpt-5.6-sol";
+      defaultModel = "gpt-6-sol";
       defaultThinkingLevel = "max";
 
       packages = [
