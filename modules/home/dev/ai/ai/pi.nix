@@ -1,28 +1,17 @@
 { lib, pkgs, ... }:
 let
-  tasteSkills = pkgs.fetchFromGitHub {
-    owner = "Leonxlnx";
-    repo = "taste-skill";
-    rev = "72e299530e2eb31ed8da06181bc19f6c18a00821";
-    hash = "sha256-DH1Q+1FgcVHnxMuXwifutCtTXulJjDgzwmQ9kSbL0a8=";
-  };
-  vercelAgentSkills = pkgs.fetchFromGitHub {
-    owner = "vercel-labs";
-    repo = "agent-skills";
-    rev = "dd089a8c752c966dee8bf0f27cb625ba193ffd9e";
-    hash = "sha256-fXbWS0+jtRYXdVn1KdqBdU0wEirrg5t/3IxdqPaAs8M=";
-  };
+  inherit (import ./skill-sources.nix { inherit pkgs; })
+    tasteSkills
+    vercelAgentSkills
+    playwrightCliSource
+    frontendDesignSkill
+    frontendDesignLicense
+    ;
   awesomeDesignMd = pkgs.fetchFromGitHub {
     owner = "VoltAgent";
     repo = "awesome-design-md";
     rev = "8147538b4226ae41e2487a9179e3bcc1f68e8554";
     hash = "sha256-AaLS2goYWZm8WHd+c5JWQxJlHZsF/2HKjs+0epK6R1Y=";
-  };
-  playwrightCliSource = pkgs.fetchFromGitHub {
-    owner = "microsoft";
-    repo = "playwright-cli";
-    rev = "2f85a94b7b885dbf4a5d34462f253a8746a690c9";
-    hash = "sha256-KH2rl0uS/zFPebjmg6MZndcl6Llx4c9/yfCGvisBn7g=";
   };
   typesafeAiSkills = pkgs.fetchFromGitHub {
     owner = "typesafe-ai";
@@ -81,17 +70,11 @@ in
   };
   home.file.".pi/agent/skills/frontend-design/SKILL.md" = {
     force = true;
-    source = pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/anthropics/claude-code/45bdfa96ca415da92e62b6ca85a1d6e29adf3c44/plugins/frontend-design/skills/frontend-design/SKILL.md";
-      hash = "sha256-Fgjqd/u2/DDROpfRLPqOvzE1jUDw3Ze+7SSCnWs/Rd0=";
-    };
+    source = frontendDesignSkill;
   };
   home.file.".pi/agent/skills/frontend-design/LICENSE.txt" = {
     force = true;
-    source = pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/anthropics/claude-code/45bdfa96ca415da92e62b6ca85a1d6e29adf3c44/LICENSE.md";
-      hash = "sha256-coFY/RA3FD+taQfo+jSAQXflmLcyZRlQP+g8r974SeY=";
-    };
+    source = frontendDesignLicense;
   };
   home.file.".local/share/awesome-design-md" = {
     force = true;

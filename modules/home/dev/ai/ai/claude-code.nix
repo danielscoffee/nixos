@@ -1,5 +1,61 @@
-{ pkgs, ... }:
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  settingsPath = "${config.programs.claude-code.configDir}/settings.json";
+  nixSettings = config.home.file.${settingsPath}.source;
+
+  src = import ./skill-sources.nix { inherit pkgs; };
+  # Local skills shared with Pi: vendored (and partly patched) copies of
+  # github:mattpocock/skills, plus nix-managed-debugging. code-review is
+  # skipped: it collides with Claude Code's built-in /code-review.
+  localSkills = [
+    "domain-modeling"
+    "grill-me"
+    "nix-managed-debugging"
+    "teach"
+    "wizard"
+    "writing-for-agents"
+  ];
+  # Claude Code only discovers skills/<name>/SKILL.md, so flatten the
+  # nested upstream collections Pi loads as skills/{taste,vercel}/<name>.
+  skills = pkgs.runCommandLocal "claude-code-shared-skills" { } ''
+    mkdir -p $out/frontend-design
+    ln -s ${src.frontendDesignSkill} $out/frontend-design/SKILL.md
+    ln -s ${src.frontendDesignLicense} $out/frontend-design/LICENSE.txt
+    ln -s ${src.playwrightCliSource}/skills/playwright-cli $out/playwright-cli
+    for d in ${src.tasteSkills}/skills/*/ ${src.vercelAgentSkills}/skills/*/; do
+      ln -s "$d" "$out/$(basename "$d")"
+    done
+    for s in ${lib.escapeShellArgs localSkills}; do
+      ln -s ${./pi/skills}/"$s" "$out/$s"
+    done
+  '';
+in
+{
+  # Claude Code writes to settings.json at runtime (/model, /effort, ...),
+  # so keep it a mutable file: Nix-declared keys win, runtime keys persist.
+  home.file.${settingsPath}.enable = false;
+
+  home.activation.claudeCodeSettings = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    target=${lib.escapeShellArg settingsPath}
+    run mkdir -p "$(dirname "$target")"
+    if [ -L "$target" ]; then
+      run rm "$target"
+    fi
+    if [ -f "$target" ] && ${pkgs.jq}/bin/jq -e . "$target" >/dev/null 2>&1; then
+      tmp="$(mktemp)"
+      ${pkgs.jq}/bin/jq -s '.[0] * .[1]' "$target" ${nixSettings} > "$tmp"
+      run install -m644 "$tmp" "$target"
+      rm -f "$tmp"
+    else
+      run install -m644 ${nixSettings} "$target"
+    fi
+  '';
+
   home.file.".claude/RTK.md" = {
     force = true;
     text = ''
@@ -37,6 +93,7 @@
 
   programs.claude-code = {
     enable = true;
+    inherit skills;
 
     settings = {
       model = "claude-opus-5-5";
