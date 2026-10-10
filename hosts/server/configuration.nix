@@ -7,6 +7,8 @@
 {
   imports = [
     ../../modules/server
+    # Mason-installed language servers and tools in the nvim config.
+    ../../modules/nix-ld.nix
     inputs.home-manager.nixosModules.home-manager
   ]
   ++ lib.optional (builtins.pathExists ./hardware-configuration.nix) ./hardware-configuration.nix;

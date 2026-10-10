@@ -90,11 +90,12 @@ assert lib.all (name: home.programs.${name}.enable) [
 ];
 assert lib.all (name: home.xdg.configFile.${name}.enable) [
   "fish/config.fish"
-  "nvim/init.lua"
   "tmux/tmux.conf"
 ];
-assert lib.hasInfix (builtins.readFile ../dotfiles/server/nvim/init.lua)
-  home.programs.neovim.initLua;
+# nvim runs the shared nvim-config checkout; Mason's binaries need nix-ld.
+assert !home.xdg.configFile."nvim/init.lua".enable;
+assert lib.hasInfix "danielscoffee/nvim-config" home.home.activation.nvimConfig.data;
+assert config.programs.nix-ld.enable;
 assert lib.all (package: lib.elem (toString package) homePackages) (
   with server.pkgs;
   [
