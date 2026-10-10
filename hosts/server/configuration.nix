@@ -46,6 +46,7 @@
   home-manager = {
     useUserPackages = true;
     backupFileExtension = "hm-backup";
+    extraSpecialArgs = { inherit inputs; };
     users.daniel = import ../../modules/home/server.nix;
   };
 

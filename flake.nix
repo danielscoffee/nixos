@@ -12,6 +12,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hermes-agent.url = "github:NousResearch/hermes-agent/v2026.7.20";
+    # Codex CLI from official release binaries; bump with flakes/codex/update.sh.
+    codex = {
+      url = "path:./flakes/codex";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

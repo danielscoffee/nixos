@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
+let
+  src = import ./skill-sources.nix { inherit pkgs; };
+in
 {
   home.file.".codex/RTK.md" = {
     force = true;
@@ -40,8 +43,15 @@
 
   programs.codex = {
     enable = true;
+    package = inputs.codex.packages.${pkgs.stdenv.hostPlatform.system}.codex;
 
     settings = {
+      # Nix owns the binary: no self-update checks, and no auto-started
+      # daemon that copies itself into ~/.codex/packages and self-updates
+      # (nixpkgs patches the same default off; openai/codex#48195).
+      check_for_update_on_startup = false;
+      features.daemon_auto_start = false;
+
       model = "gpt-6-sol";
       approval_policy = "on-request";
       sandbox_mode = "workspace-write";
@@ -68,6 +78,8 @@
 
       @/home/daniel/.codex/RTK.md
     '';
+
+    skills.graphify = "${src.graphifySkills}/codex";
 
     rules = {
       default = ''
