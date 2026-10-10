@@ -9,17 +9,6 @@ let
   nixSettings = config.home.file.${settingsPath}.source;
 
   src = import ./skill-sources.nix { inherit pkgs; };
-  # Local skills shared with Pi: vendored (and partly patched) copies of
-  # github:mattpocock/skills, plus nix-managed-debugging. code-review is
-  # skipped: it collides with Claude Code's built-in /code-review.
-  localSkills = [
-    "domain-modeling"
-    "grill-me"
-    "nix-managed-debugging"
-    "teach"
-    "wizard"
-    "writing-for-agents"
-  ];
   # Picked from github:emilkowalski/skills; animate-expo, ask-sonner and
   # write-swift are skipped (no Expo, Sonner or Swift in use).
   pickedEmilSkills = [
@@ -35,23 +24,104 @@ let
     "prototype"
     "review-animations"
   ];
+  # Dropped from the taste and vercel collections: they need image
+  # generation, Google Stitch or Codex; are superseded (taste-skill-v1,
+  # gpt-tasteskill); are covered by impeccable (redesign-skill,
+  # soft-skill); fight terse output (output-skill); or target React Native.
+  excludedSkills = [
+    "brandkit"
+    "gpt-tasteskill"
+    "image-to-code-skill"
+    "imagegen-frontend-mobile"
+    "imagegen-frontend-web"
+    "output-skill"
+    "react-native-skills"
+    "redesign-skill"
+    "soft-skill"
+    "stitch-skill"
+    "taste-skill-v1"
+  ];
+  # Reachable as /<name> but never auto-loaded: triggers that overlap
+  # impeccable, style presets, deliberate audits, and the biggest
+  # descriptions.
+  # The GSAP and three.js packs join this list in the build script.
+  invokeOnlySkills = [
+    "animation-vocabulary"
+    "brutalist-skill"
+    "bunshin"
+    "cast"
+    "design-dna"
+    "find-animation-opportunities"
+    "improve-animations"
+    "minimalist-skill"
+    "motion-design"
+    "paint"
+    "taste-skill"
+    "transitions-dev"
+    "ui-ux-pro-max"
+  ];
   # Claude Code only discovers skills/<name>/SKILL.md, so flatten the
   # nested upstream collections Pi loads as skills/{taste,vercel}/<name>.
   skills = pkgs.runCommandLocal "claude-code-shared-skills" { } ''
-    mkdir -p $out/frontend-design
-    ln -s ${src.frontendDesignSkill} $out/frontend-design/SKILL.md
-    ln -s ${src.frontendDesignLicense} $out/frontend-design/LICENSE.txt
+    mkdir -p $out
     ln -s ${src.playwrightCliSource}/skills/playwright-cli $out/playwright-cli
     ln -s ${src.graphifySkills}/claude $out/graphify
     ln -s ${./claude/skills/model-routing} $out/model-routing
+    ln -s ${src.securityAuditSkill}/skills/security-audit $out/security-audit
+    ln -s ${src.stopSlopSkill} $out/stop-slop
+    ln -s ${src.humanizerSkill} $out/humanizer
+    ln -s ${src.impeccableSkill} $out/impeccable
+    ln -s ${src.transitionsDevSource}/skills/transitions-dev $out/transitions-dev
+    ln -s ${src.uiUxProMaxSkill} $out/ui-ux-pro-max
+    ln -s ${./claude/skills/high-end-frontend} $out/high-end-frontend
     for d in ${src.tasteSkills}/skills/*/ ${src.vercelAgentSkills}/skills/*/; do
       ln -s "$d" "$out/$(basename "$d")"
     done
-    for s in ${lib.escapeShellArgs localSkills}; do
+    for d in ${src.ponytailSkills}/*/; do
+      ln -s "$d" "$out/$(basename "$d")"
+    done
+    for s in ${lib.escapeShellArgs src.localSkills}; do
       ln -s ${./pi/skills}/"$s" "$out/$s"
     done
     for s in ${lib.escapeShellArgs pickedEmilSkills}; do
       ln -s ${src.emilSkills}/skills/"$s" "$out/$s"
+    done
+    for s in ${lib.escapeShellArgs excludedSkills}; do
+      rm "$out/$s" || { echo "excluded skill $s not found upstream" >&2; exit 1; }
+    done
+
+    # UI/motion packs, reached through high-end-frontend. Genjutsu's
+    # entry skills find _jutsu/ as their sibling.
+    invoke_only=(${lib.escapeShellArgs invokeOnlySkills})
+    for d in ${src.gsapSkills}/skills/*/ ${src.threejsSkills}/skills/*/; do
+      s=$(basename "$d")
+      # Teaches removed WebGPU post-processing APIs and pre-OutputPass
+      # color handling.
+      [ "$s" = threejs-postprocessing ] && continue
+      ln -s "$d" "$out/$s"
+      invoke_only+=("$s")
+    done
+    ln -s ${src.motionDesignSource}/skills/motion-design $out/motion-design
+    ln -s ${src.designDnaSkill} $out/design-dna
+    for s in bunshin cast paint _jutsu; do
+      ln -s ${src.genjutsuSource}/skills/$s $out/$s
+    done
+
+    for s in "''${invoke_only[@]}"; do
+      skill=$(readlink -f "$out/$s")
+      rm "$out/$s"
+      cp -r "$skill" "$out/$s"
+      chmod -R u+w "$out/$s"
+      if [ "$(head -1 "$out/$s/SKILL.md")" != "---" ]; then
+        echo "$s: SKILL.md has no frontmatter to patch" >&2
+        exit 1
+      fi
+      sed -i '1a disable-model-invocation: true' "$out/$s/SKILL.md"
+    done
+    # Genjutsu pre-approves Bash/Edit/Write (bunshin adds Agent and
+    # Workflow) for its whole run; drop that so its runs prompt as usual.
+    for s in bunshin cast paint; do
+      sed -i '/^allowed-tools:/d' "$out/$s/SKILL.md"
     done
   '';
   # Codex delegation/review plugin (v1.0.6). State lives in
