@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   modulesPath,
   pkgs,
   ...
@@ -49,10 +50,27 @@
     "flakes"
   ];
 
+  # Keep the small NVMe from filling up with old generations and stale /tmp.
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 14d";
+  };
+  nix.optimise.automatic = true;
+  boot.tmp.cleanOnBoot = true;
+
   virtualisation.docker.rootless = {
     enable = true;
     setSocketVariable = true;
   };
+
+  # Tailscale SSH bypasses PAM, so pam_systemd never sets XDG_RUNTIME_DIR and
+  # setSocketVariable silently leaves DOCKER_HOST empty. Must run before it.
+  environment.extraInit = lib.mkBefore ''
+    if [ -z "$XDG_RUNTIME_DIR" ] && [ -d "/run/user/$(id -u)" ]; then
+      export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+    fi
+  '';
 
   environment.systemPackages = with pkgs; [
     btop
@@ -60,6 +78,7 @@
     docker-compose
     gitMinimal
     gnumake
+    kitty.terminfo
     tmux
     vim
   ];

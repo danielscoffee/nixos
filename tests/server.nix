@@ -33,7 +33,7 @@ assert config.networking.firewall.allowedTCPPorts == [ ];
 assert config.networking.firewall.backend == "iptables";
 assert config.services.openssh.ports == [ 22 ];
 assert lib.hasInfix
-  "iptables -w -A nixos-fw -s 192.168.100.0/24 -p tcp --dport 22 -j nixos-fw-accept\n"
+  "iptables -w -A nixos-fw -s 192.168.100.17/24 -p tcp --dport 22 -j nixos-fw-accept\n"
   config.networking.firewall.extraCommands;
 assert
   config.networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts
@@ -50,14 +50,21 @@ assert lib.all (setting: config.services.logind.settings.Login.${setting} == "ig
 ];
 assert config.systemd.enableEmergencyMode;
 assert config.services.logrotate.enable;
+assert config.nix.gc.automatic && config.nix.optimise.automatic;
+assert config.boot.tmp.cleanOnBoot;
 assert config.virtualisation.docker.rootless.enable;
 assert config.virtualisation.docker.rootless.setSocketVariable;
+# Tailscale SSH sessions lack XDG_RUNTIME_DIR; the fallback must precede DOCKER_HOST setup.
+assert lib.hasPrefix "if [ -z \"$XDG_RUNTIME_DIR\" ]" config.environment.extraInit;
 assert !config.virtualisation.docker.enable && !config.virtualisation.podman.enable;
 assert lib.elem (toString server.pkgs.docker-compose) (
   map toString config.environment.systemPackages
 );
 assert config ? home-manager;
 assert config.programs.fish.enable;
+assert lib.elem (toString server.pkgs.kitty.terminfo) (
+  map toString config.environment.systemPackages
+);
 assert config.users.users.daniel.shell.outPath == config.programs.fish.package.outPath;
 assert config.home-manager.useUserPackages;
 assert !config.home-manager.useGlobalPkgs;
