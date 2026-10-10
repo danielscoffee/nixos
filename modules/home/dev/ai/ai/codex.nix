@@ -1,6 +1,24 @@
-{ inputs, pkgs, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 let
   src = import ./skill-sources.nix { inherit pkgs; };
+  # The engineering half of Claude Code's skills: shared local skills,
+  # Graphify, Ponytail and security-audit (no frontend/design picks).
+  skills = pkgs.runCommandLocal "codex-shared-skills" { } ''
+    mkdir -p $out
+    ln -s ${src.graphifySkills}/codex $out/graphify
+    ln -s ${src.securityAuditSkill}/skills/security-audit $out/security-audit
+    for d in ${src.ponytailSkills}/*/; do
+      ln -s "$d" "$out/$(basename "$d")"
+    done
+    for s in ${lib.escapeShellArgs src.localSkills}; do
+      ln -s ${./pi/skills}/"$s" "$out/$s"
+    done
+  '';
 in
 {
   home.file.".codex/RTK.md" = {
@@ -44,6 +62,7 @@ in
   programs.codex = {
     enable = true;
     package = inputs.codex.packages.${pkgs.stdenv.hostPlatform.system}.codex;
+    mutableSettings = true;
 
     settings = {
       # Nix owns the binary: no self-update checks, and no auto-started
@@ -52,7 +71,7 @@ in
       check_for_update_on_startup = false;
       features.daemon_auto_start = false;
 
-      model = "gpt-6-sol";
+      model = "gpt-6-astra";
       approval_policy = "on-request";
       sandbox_mode = "workspace-write";
       model_reasoning_effort = "medium";
@@ -79,7 +98,7 @@ in
       @/home/daniel/.codex/RTK.md
     '';
 
-    skills.graphify = "${src.graphifySkills}/codex";
+    inherit skills;
 
     rules = {
       default = ''
