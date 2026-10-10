@@ -16,7 +16,8 @@
     })
   ];
 
-  home.packages = with pkgs; [
-    rtk
+  home.packages = [
+    (import ./ai/skill-sources.nix { inherit pkgs; }).graphifyCli
+    pkgs.rtk
   ];
 }

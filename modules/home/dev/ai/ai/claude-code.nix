@@ -20,6 +20,21 @@ let
     "wizard"
     "writing-for-agents"
   ];
+  # Picked from github:emilkowalski/skills; animate-expo, ask-sonner and
+  # write-swift are skipped (no Expo, Sonner or Swift in use).
+  pickedEmilSkills = [
+    "animate"
+    "animation-vocabulary"
+    "apple-design"
+    "break-ui"
+    "emil-design-eng"
+    "find-animation-opportunities"
+    "improve-animations"
+    "mobile-native"
+    "pick-ui-library"
+    "prototype"
+    "review-animations"
+  ];
   # Claude Code only discovers skills/<name>/SKILL.md, so flatten the
   # nested upstream collections Pi loads as skills/{taste,vercel}/<name>.
   skills = pkgs.runCommandLocal "claude-code-shared-skills" { } ''
@@ -27,13 +42,26 @@ let
     ln -s ${src.frontendDesignSkill} $out/frontend-design/SKILL.md
     ln -s ${src.frontendDesignLicense} $out/frontend-design/LICENSE.txt
     ln -s ${src.playwrightCliSource}/skills/playwright-cli $out/playwright-cli
+    ln -s ${src.graphifySkills}/claude $out/graphify
+    ln -s ${./claude/skills/model-routing} $out/model-routing
     for d in ${src.tasteSkills}/skills/*/ ${src.vercelAgentSkills}/skills/*/; do
       ln -s "$d" "$out/$(basename "$d")"
     done
     for s in ${lib.escapeShellArgs localSkills}; do
       ln -s ${./pi/skills}/"$s" "$out/$s"
     done
+    for s in ${lib.escapeShellArgs pickedEmilSkills}; do
+      ln -s ${src.emilSkills}/skills/"$s" "$out/$s"
+    done
   '';
+  # Codex delegation/review plugin (v1.0.6). State lives in
+  # CLAUDE_PLUGIN_DATA or $TMPDIR, so a read-only store copy works.
+  codexPluginCc = pkgs.fetchFromGitHub {
+    owner = "openai";
+    repo = "codex-plugin-cc";
+    rev = "db52e28f4d9ded852ab3942cea316258ae4ef346";
+    hash = "sha256-S/R4kHTcIHBcG0TRX063C7ILXZZm0oMqunchPGg6ToU=";
+  };
 in
 {
   # Claude Code writes to settings.json at runtime (/model, /effort, ...),
@@ -55,6 +83,10 @@ in
       run install -m644 ${nixSettings} "$target"
     fi
   '';
+
+  # Saved Workflow scripts: each runs as /<name> in every project.
+  home.file."${config.programs.claude-code.configDir}/workflows/routed-task.js".source =
+    ./claude/workflows/routed-task.js;
 
   home.file.".claude/RTK.md" = {
     force = true;
@@ -94,6 +126,7 @@ in
   programs.claude-code = {
     enable = true;
     inherit skills;
+    plugins.codex = "${codexPluginCc}/plugins/codex";
 
     settings = {
       model = "claude-opus-5-5";

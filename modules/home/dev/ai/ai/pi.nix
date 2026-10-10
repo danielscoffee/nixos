@@ -6,6 +6,7 @@ let
     playwrightCliSource
     frontendDesignSkill
     frontendDesignLicense
+    graphifySkills
     ;
   awesomeDesignMd = pkgs.fetchFromGitHub {
     owner = "VoltAgent";
@@ -62,6 +63,11 @@ in
     force = true;
     recursive = true;
     source = "${playwrightCliSource}/skills/playwright-cli";
+  };
+  home.file.".pi/agent/skills/graphify" = {
+    force = true;
+    recursive = true;
+    source = "${graphifySkills}/pi";
   };
   home.file.".pi/agent/skills/typesafe-ai" = {
     force = true;
