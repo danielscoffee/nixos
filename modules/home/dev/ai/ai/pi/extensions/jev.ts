@@ -12,6 +12,7 @@ import { join } from "node:path";
 import {
 	createProvider,
 	envApiKeyAuth,
+	lazyStream,
 	StringEnum,
 	Type,
 } from "@earendil-works/pi-ai";
@@ -346,9 +347,18 @@ export default function (pi: ExtensionAPI) {
 			id: "typesafe-ai",
 			name: "TypeSafe (Jev)",
 			auth: { apiKey: envApiKeyAuth("TypeSafe API key", ["TYPESAFE_API_KEY"]) },
-			// Native login entry; evaluations use the tool, not a chat transport.
+			// Keep the existing login ID; evaluations use the tool, not chat models.
 			models: [],
-			api: {},
+			api: {
+				stream: (model) =>
+					lazyStream(model, async () => {
+						throw new Error("TypeSafe evaluations use the jev tool, not chat.");
+					}),
+				streamSimple: (model) =>
+					lazyStream(model, async () => {
+						throw new Error("TypeSafe evaluations use the jev tool, not chat.");
+					}),
+			},
 		}),
 	);
 	pi.registerTool({
