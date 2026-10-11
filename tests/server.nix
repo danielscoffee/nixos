@@ -95,6 +95,8 @@ assert lib.all (name: home.xdg.configFile.${name}.enable) [
 # nvim runs the shared nvim-config checkout; Mason's binaries need nix-ld.
 assert !home.xdg.configFile."nvim/init.lua".enable;
 assert lib.hasInfix "danielscoffee/nvim-config" home.home.activation.nvimConfig.data;
+assert home.home.file ? ".local/share/nvim/site/parser/norg.so";
+assert lib.elem "LD_LIBRARY_PATH" home.programs.neovim.extraWrapperArgs;
 assert config.programs.nix-ld.enable;
 assert lib.all (package: lib.elem (toString package) homePackages) (
   with server.pkgs;

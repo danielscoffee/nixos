@@ -24,6 +24,14 @@
     # Keep ~/.config/nvim free for the checkout below; HM's provider
     # settings load through the wrapper instead.
     sideloadInitLua = true;
+    # C++ tree-sitter grammars (norg) dlopen libstdc++; same fix as
+    # neovimWithLibstdcpp on the desktop hosts.
+    extraWrapperArgs = [
+      "--prefix"
+      "LD_LIBRARY_PATH"
+      ":"
+      (lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ])
+    ];
   };
 
   # Same nvim config as the other machines: a writable checkout, so
@@ -39,6 +47,11 @@
       fi
     fi
   '';
+  # Prebuilt norg grammars for neorg, as on the desktop hosts.
+  home.file.".local/share/nvim/site/parser/norg.so".source =
+    "${pkgs.tree-sitter-grammars.tree-sitter-norg}/parser";
+  home.file.".local/share/nvim/site/parser/norg_meta.so".source =
+    "${pkgs.tree-sitter-grammars.tree-sitter-norg-meta}/parser";
 
   home.packages = with pkgs; [
     gh
