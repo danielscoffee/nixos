@@ -7,6 +7,8 @@
 {
   imports = [
     ../../modules/server
+    # Power caps, battery charge limit and disk temps for this laptop.
+    ./power.nix
     # Mason-installed language servers and tools in the nvim config.
     ../../modules/nix-ld.nix
     inputs.home-manager.nixosModules.home-manager

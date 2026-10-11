@@ -52,6 +52,11 @@ assert config.systemd.enableEmergencyMode;
 assert config.services.logrotate.enable;
 assert config.nix.gc.automatic && config.nix.optimise.automatic;
 assert config.boot.tmp.cleanOnBoot;
+# Laptop running 24/7: capped package power, battery held at 80%, panel blanks.
+assert lib.hasInfix ''KERNEL=="intel-rapl:0"'' config.services.udev.extraRules;
+assert lib.hasInfix "options acer_wmi_battery enable_health_mode=1" config.boot.extraModprobeConfig;
+assert lib.elem "consoleblank=60" config.boot.kernelParams;
+assert config.services.smartd.enable;
 assert config.virtualisation.docker.rootless.enable;
 assert config.virtualisation.docker.rootless.setSocketVariable;
 # Tailscale SSH sessions lack XDG_RUNTIME_DIR; the fallback must precede DOCKER_HOST setup.
