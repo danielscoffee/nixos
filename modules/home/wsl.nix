@@ -28,6 +28,11 @@ in
 
   programs.home-manager.enable = true;
 
+  home.file.".local/share/nvim/site/parser/norg.so".source =
+    "${pkgs.tree-sitter-grammars.tree-sitter-norg}/parser";
+  home.file.".local/share/nvim/site/parser/norg_meta.so".source =
+    "${pkgs.tree-sitter-grammars.tree-sitter-norg-meta}/parser";
+
   home.packages = with pkgs; [
     git
     gh
