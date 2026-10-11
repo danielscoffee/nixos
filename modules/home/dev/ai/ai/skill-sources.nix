@@ -81,6 +81,24 @@ in
         allow_implicit_invocation: false
       EOF
     '';
+  # One skill from github:github/awesome-copilot; the repo is too big to
+  # fetch whole.
+  createReadmeSkill =
+    let
+      base = "https://raw.githubusercontent.com/github/awesome-copilot/82701c24b99488536ca399ff4789a458b7a05db7";
+      skill = pkgs.fetchurl {
+        url = "${base}/skills/create-readme/SKILL.md";
+        hash = "sha256-qT+RYb7zJOOhVQ/HnU8BtmCj+36txEVWd9ms5NopZaw=";
+      };
+      license = pkgs.fetchurl {
+        url = "${base}/LICENSE";
+        hash = "sha256-4yRJ0jCFOZrcEiL3oXQItzBVAljlFifBU8sQjKmVWCM=";
+      };
+    in
+    pkgs.runCommandLocal "create-readme-skill" { } ''
+      install -Dm644 ${skill} $out/SKILL.md
+      install -Dm644 ${license} $out/LICENSE
+    '';
   # seoskill.dev; matches the pinned CLI in pkgs/seo (0.2.41).
   seoSource = pkgs.fetchFromGitHub {
     owner = "iannuttall";
