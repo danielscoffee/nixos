@@ -307,23 +307,21 @@ in
     settings = {
       defaultProjectTrust = "ask";
       defaultProvider = "openai-codex";
-      defaultModel = "gpt-6-sol";
+      defaultModel = "gpt-6.1-sol";
       defaultThinkingLevel = "max";
 
       packages = [
         "npm:pi-agent-sandbox@0.2.0"
         "npm:pi-caveman@1.0.8"
         "npm:pi-superpowers@0.2.0"
-        "npm:pi-web-access@0.19.0"
-        "npm:pi-subagents@0.45.0"
-        "npm:pi-lens@3.8.74"
+        "npm:pi-web-access@0.38.0"
+        "npm:pi-subagents@0.77.0"
+        "npm:pi-lens@4.4.3"
         "npm:pi-powerline-footer@0.12.2"
         "npm:@ayulab/pi-rewind@0.4.6"
         "npm:@dietrichgebert/ponytail@4.9.0"
         "npm:pi-advisor@0.3.0"
       ];
-
-      skills = [ "npm/node_modules/pi-lens/skills" ];
     };
   };
 }

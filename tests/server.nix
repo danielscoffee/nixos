@@ -93,6 +93,13 @@ assert lib.all (name: home.programs.${name}.enable) [
   "claude-code"
   "pi-coding-agent"
 ];
+assert home.programs.pi-coding-agent.settings.defaultProvider == "openai-codex";
+assert home.programs.pi-coding-agent.settings.defaultModel == "gpt-6.1-sol";
+assert lib.all (source: lib.elem source home.programs.pi-coding-agent.settings.packages) [
+  "npm:pi-web-access@0.38.0"
+  "npm:pi-subagents@0.77.0"
+  "npm:pi-lens@4.4.3"
+];
 assert lib.all (name: home.xdg.configFile.${name}.enable) [
   "fish/config.fish"
   "tmux/tmux.conf"
