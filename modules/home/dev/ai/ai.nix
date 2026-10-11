@@ -18,6 +18,8 @@
 
   home.packages = [
     (import ./ai/skill-sources.nix { inherit pkgs; }).graphifyCli
+    # CLI behind the `seo` skill; pinned so the skill never runs `npm i -g`.
+    (pkgs.callPackage ../../../../pkgs/seo/package.nix { })
     pkgs.rtk
   ];
 }

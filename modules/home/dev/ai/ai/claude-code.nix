@@ -68,6 +68,7 @@ let
     ln -s ${src.graphifySkills}/claude $out/graphify
     ln -s ${./claude/skills/model-routing} $out/model-routing
     ln -s ${src.securityAuditSkill}/skills/security-audit $out/security-audit
+    ln -s ${src.seoSource}/skills/seo $out/seo
     ln -s ${src.stopSlopSkill} $out/stop-slop
     ln -s ${src.humanizerSkill} $out/humanizer
     ln -s ${src.impeccableSkill} $out/impeccable

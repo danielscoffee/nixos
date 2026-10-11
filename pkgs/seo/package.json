@@ -1,0 +1,6 @@
+{
+  "name": "seo-cli",
+  "version": "0.2.41",
+  "private": true,
+  "dependencies": { "seo": "0.2.41" }
+}

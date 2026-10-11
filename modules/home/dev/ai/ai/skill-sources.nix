@@ -81,6 +81,13 @@ in
         allow_implicit_invocation: false
       EOF
     '';
+  # seoskill.dev; matches the pinned CLI in pkgs/seo (0.2.41).
+  seoSource = pkgs.fetchFromGitHub {
+    owner = "iannuttall";
+    repo = "seo";
+    rev = "5b794fe9c8addbc227c49262bb6ac79ad8429452";
+    hash = "sha256-6eIpiHd1hHP5GfS7BRyKrz5Y17FQr+j9wICG9dzoOts=";
+  };
   stopSlopSkill = pkgs.fetchFromGitHub {
     owner = "hardikpandya";
     repo = "stop-slop";
