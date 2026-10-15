@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   imports = [
     ./ai/codex.nix
@@ -21,5 +21,7 @@
     # CLI behind the `seo` skill; pinned so the skill never runs `npm i -g`.
     (pkgs.callPackage ../../../../pkgs/seo/package.nix { })
     pkgs.rtk
+    # `ai-sandbox -- CMD` runs any command in the agents' sandbox.
+    (import ./ai/sandbox.nix { inherit lib pkgs; }).script
   ];
 }

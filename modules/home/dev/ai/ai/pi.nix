@@ -10,6 +10,7 @@ let
     securityAuditSkill
     onetakeSkill
     ;
+  sandbox = import ./sandbox.nix { inherit lib pkgs; };
   awesomeDesignMd = pkgs.fetchFromGitHub {
     owner = "VoltAgent";
     repo = "awesome-design-md";
@@ -293,6 +294,19 @@ in
 
   programs.pi-coding-agent = {
     enable = true;
+    # Runs inside the bubblewrap sandbox; ~/.playwright and
+    # awesome-design-md feed skills.
+    package = sandbox.wrap {
+      package = pkgs.pi-coding-agent;
+      rw = [
+        ".pi"
+        ".local/share/rtk"
+      ];
+      ro = [
+        ".playwright"
+        ".local/share/awesome-design-md"
+      ];
+    };
 
     extraPackages = with pkgs; [
       nil
@@ -317,7 +331,6 @@ in
       defaultThinkingLevel = "max";
 
       packages = [
-        "npm:pi-agent-sandbox@0.2.0"
         "npm:pi-caveman@1.0.8"
         "npm:pi-superpowers@0.2.0"
         "npm:pi-web-access@0.38.0"

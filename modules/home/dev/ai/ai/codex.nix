@@ -6,6 +6,7 @@
 }:
 let
   src = import ./skill-sources.nix { inherit pkgs; };
+  sandbox = import ./sandbox.nix { inherit lib pkgs; };
   # The engineering half of Claude Code's skills: shared local skills,
   # Graphify, Ponytail and security-audit (no frontend/design picks),
   # plus onetake.
@@ -63,7 +64,15 @@ in
 
   programs.codex = {
     enable = true;
-    package = inputs.codex.packages.${pkgs.stdenv.hostPlatform.system}.codex;
+    # Runs inside the bubblewrap sandbox, with Codex's own workspace-write
+    # sandbox nested in it.
+    package = sandbox.wrap {
+      package = inputs.codex.packages.${pkgs.stdenv.hostPlatform.system}.codex;
+      rw = [
+        ".codex"
+        ".local/share/rtk"
+      ];
+    };
     mutableSettings = true;
 
     settings = {
@@ -97,6 +106,7 @@ in
       - Do not commit, push, force-reset, delete data, or run destructive commands unless explicitly asked.
       - If task touches secrets, credentials, auth, or prod config: pause and ask.
       - For Nix/NixOS: prefer `nix flake check`, `nix build`, `nixos-rebuild dry-run` before switch.
+      - Sessions run inside a bubblewrap sandbox (`ai-sandbox`): only the project (git top-level), `/tmp` and `~/.codex` are writable, and `$HOME` is a private scratch home without SSH, GPG, gh or npm credentials. Failed writes or missing credentials elsewhere are by design: report them instead of working around them.
 
       @/home/daniel/.codex/RTK.md
     '';

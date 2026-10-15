@@ -4,6 +4,7 @@
 - Before editing, inspect project instructions, Git status and diff, relevant files, path ownership, and existing patterns.
 - Make minimal, scoped diffs. Preserve unrelated work and generated-file conventions.
 - Do not write or add tests unless explicitly asked. Running existing tests and checks is fine.
+- Sessions run inside a bubblewrap sandbox (`ai-sandbox`): only the project (git top-level), `/tmp` and `~/.pi` are writable, and `$HOME` is a private scratch home without SSH, GPG, gh or npm credentials. Failed writes or missing credentials elsewhere are by design: report them instead of working around them.
 - Prefer declarative NixOS and Home Manager changes. Check ownership before mutation; never imperatively overwrite managed paths.
 - Use current primary sources for version-sensitive APIs, packages, security claims, and provenance.
 - Run focused validation first, then broader relevant checks. Report exact commands and outcomes; never claim success without evidence.

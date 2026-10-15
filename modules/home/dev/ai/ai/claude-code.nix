@@ -9,6 +9,7 @@ let
   nixSettings = config.home.file.${settingsPath}.source;
 
   src = import ./skill-sources.nix { inherit pkgs; };
+  sandbox = import ./sandbox.nix { inherit lib pkgs; };
   # Picked from github:emilkowalski/skills; animate-expo, ask-sonner and
   # write-swift are skipped (no Expo, Sonner or Swift in use).
   pickedEmilSkills = [
@@ -157,6 +158,17 @@ in
     fi
   '';
 
+  # The sandboxed launcher sets CLAUDE_CONFIG_DIR, which moves the global
+  # config (.claude.json) into the config dir; seed it from the old
+  # location once. The original stays behind for rollbacks.
+  home.activation.claudeCodeGlobalConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    new=${lib.escapeShellArg "${config.programs.claude-code.configDir}/.claude.json"}
+    if [ -f "$HOME/.claude.json" ] && [ ! -e "$new" ]; then
+      run mkdir -p "$(dirname "$new")"
+      run cp -p "$HOME/.claude.json" "$new"
+    fi
+  '';
+
   # Saved Workflow scripts: each runs as /<name> in every project.
   home.file."${config.programs.claude-code.configDir}/workflows/routed-task.js".source =
     ./claude/workflows/routed-task.js;
@@ -198,6 +210,23 @@ in
 
   programs.claude-code = {
     enable = true;
+    # Runs inside the bubblewrap sandbox; ~/.codex is writable for the
+    # codex plugin and ~/.playwright and awesome-design-md feed skills.
+    package = sandbox.wrap {
+      package = pkgs.claude-code;
+      rw = [
+        ".claude"
+        ".codex"
+        ".local/share/rtk"
+      ];
+      ro = [
+        ".playwright"
+        ".local/share/awesome-design-md"
+      ];
+      # Claude rewrites .claude.json atomically, so the sandbox cannot
+      # bind that one file; keep it inside the (bound) config dir instead.
+      env.CLAUDE_CONFIG_DIR = config.programs.claude-code.configDir;
+    };
     inherit skills;
     plugins.codex = "${codexPluginCc}/plugins/codex";
 
@@ -256,6 +285,7 @@ in
       - Do not commit, push, force-reset, delete data, or run destructive commands unless explicitly asked.
       - If task touches secrets, credentials, auth, or prod config: pause and ask.
       - For Nix/NixOS: prefer `nix flake check`, `nix build`, `nixos-rebuild dry-run` before switch.
+      - Sessions run inside a bubblewrap sandbox (`ai-sandbox`): only the project (git top-level), `/tmp` and `~/.claude` are writable, and `$HOME` is a private scratch home without SSH, GPG, gh or npm credentials. Failed writes or missing credentials elsewhere are by design: report them instead of working around them.
 
       @RTK.md
     '';
