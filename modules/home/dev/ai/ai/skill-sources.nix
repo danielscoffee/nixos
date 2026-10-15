@@ -106,6 +106,13 @@ in
     rev = "5b794fe9c8addbc227c49262bb6ac79ad8429452";
     hash = "sha256-6eIpiHd1hHP5GfS7BRyKrz5Y17FQr+j9wICG9dzoOts=";
   };
+  # PolyForm Noncommercial 1.0.0.
+  onetakeSkill = pkgs.fetchFromGitHub {
+    owner = "feitangyuan";
+    repo = "onetake";
+    rev = "2f5fbd363a0aec22055fbf62489380065737c91d";
+    hash = "sha256-fna4JwnWik9A6gsnTjN5CWifkOgEeMLbdpTf7r9cE58=";
+  };
   stopSlopSkill = pkgs.fetchFromGitHub {
     owner = "hardikpandya";
     repo = "stop-slop";

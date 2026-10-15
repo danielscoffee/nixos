@@ -70,6 +70,7 @@ let
     ln -s ${src.securityAuditSkill}/skills/security-audit $out/security-audit
     ln -s ${src.seoSource}/skills/seo $out/seo
     ln -s ${src.createReadmeSkill} $out/create-readme
+    ln -s ${src.onetakeSkill} $out/onetake
     ln -s ${src.stopSlopSkill} $out/stop-slop
     ln -s ${src.humanizerSkill} $out/humanizer
     ln -s ${src.impeccableSkill} $out/impeccable
@@ -248,6 +249,7 @@ in
       - Be terse, direct, technical. Skip fluff.
       - Before code changes: inspect context, state plan briefly, then edit.
       - Prefer minimal, focused diffs. Do not rewrite unrelated code.
+      - Do not write or add tests unless explicitly asked. Running existing tests/checks is fine.
       - Use `rg`/`fd` for search. Read files before editing.
       - For bugs: reproduce or identify failing path, find root cause, fix, verify.
       - Run relevant checks before claiming done. Show commands + results.
@@ -286,7 +288,7 @@ in
         1. Reproduce or locate failing behavior.
         2. Identify root cause, not symptom.
         3. Make smallest safe change.
-        4. Add/update test when practical.
+        4. Add/update tests only if explicitly asked.
         5. Run relevant verification.
         6. Report changed files and command output summary.
       '';

@@ -8,6 +8,7 @@ let
     frontendDesignLicense
     graphifySkills
     securityAuditSkill
+    onetakeSkill
     ;
   awesomeDesignMd = pkgs.fetchFromGitHub {
     owner = "VoltAgent";
@@ -74,6 +75,11 @@ in
     force = true;
     recursive = true;
     source = "${securityAuditSkill}/skills/security-audit";
+  };
+  home.file.".pi/agent/skills/onetake" = {
+    force = true;
+    recursive = true;
+    source = onetakeSkill;
   };
   home.file.".pi/agent/skills/typesafe-ai" = {
     force = true;

@@ -7,11 +7,13 @@
 let
   src = import ./skill-sources.nix { inherit pkgs; };
   # The engineering half of Claude Code's skills: shared local skills,
-  # Graphify, Ponytail and security-audit (no frontend/design picks).
+  # Graphify, Ponytail and security-audit (no frontend/design picks),
+  # plus onetake.
   skills = pkgs.runCommandLocal "codex-shared-skills" { } ''
     mkdir -p $out
     ln -s ${src.graphifySkills}/codex $out/graphify
     ln -s ${src.securityAuditSkill}/skills/security-audit $out/security-audit
+    ln -s ${src.onetakeSkill} $out/onetake
     for d in ${src.ponytailSkills}/*/; do
       ln -s "$d" "$out/$(basename "$d")"
     done
@@ -88,6 +90,7 @@ in
       - Be terse, direct, technical. Skip fluff.
       - Before code changes: inspect context, state plan briefly, then edit.
       - Prefer minimal, focused diffs. Do not rewrite unrelated code.
+      - Do not write or add tests unless explicitly asked. Running existing tests/checks is fine.
       - Use `rg`/`fd` for search. Read files before editing.
       - For bugs: reproduce or identify failing path, find root cause, fix, verify.
       - Run relevant checks before claiming done. Show commands + results.
